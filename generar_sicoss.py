@@ -264,6 +264,7 @@ def procesar_fila(r):
     es_policia       = (cod_act.strip() == "53")
     es_penitenciario = (cod_act.strip() == "66")
     es_magistrado    = (cod_act.strip() == "100")
+    es_magistrado_doc = (cod_act.strip() == "101")
     es_tipo_policial = es_policia or es_penitenciario
     es_docente_76 = (cod_act.strip() == "76")
     es_docente_77 = (cod_act.strip() == "77")
@@ -306,6 +307,16 @@ def procesar_fila(r):
             rem_sin_tope = round(fval(r[10]))
         rem_con_tope = 0
         rem_imp5     = TOPE_SS_RED if rem_sin_tope > TOPE_SS else rem_sin_tope
+    elif es_magistrado_doc:
+        # Magistrado + Docente (act=101)
+        # col73 = rem_magistrado (col11 del registro PJ con act_doc=01)
+        # col47 = rem_docente (col47 del registro docente, copiado por acumular)
+        rem_magistrado = fval(r[73]) if len(r) > 73 and r[73] else 0
+        rem_docente    = fval(r[47]) if len(r) > 47 and r[47] else 0
+        rem_total      = round(rem_magistrado + rem_docente)
+        rem_con_tope   = rem_total                              # RI1 = rem_total sin tope
+        rem_sin_tope   = round(rem_docente)                  # para RI6
+        rem_imp5       = rem_total                           # RI5 = rem_total
     else:
         rem_sin_tope = int(fval(r[10]))  # tribunal: usar col10 directamente
         rem_total    = int(fval(r[9]))
@@ -369,8 +380,9 @@ def procesar_fila(r):
     put(buf, 41, 42, r[3])                                    # Cónyuge
     put(buf, 42, 44, str(r[2]).strip().zfill(2)[:2])          # Cant. Hijos
     put(buf, 44, 46, "01")                                    # Cód. Situación (fijo)
-    cod_cond = "05" if str(r[7]).strip() == "1506" else "01"
-    put(buf, 46, 48, cod_cond)                                  # Cód. Condición (01=común, 05=serv.diferenciados)
+    cod_cond = "05" if str(r[7]).strip() == "1506" else \
+               "02" if str(r[7]).strip() == "1206" else "01"
+    put(buf, 46, 48, cod_cond)                                  # Cód. Condición (01=común, 02=jubilado, 05=serv.diferenciados)
     put(buf, 48, 51, cod_act)                                 # Cód. Actividad
     put(buf, 51, 53, zona)                                    # Cód. Zona
     put(buf, 53, 58, "000  ")                                 # Porc. Aporte Adic. SS
@@ -383,6 +395,8 @@ def procesar_fila(r):
     ri1 = 0 if (es_tipo_policial or es_docente_76 or es_docente_77) else rem_con_tope
     if es_doc77_doble_empleo:
         ri1 = nodoc_col10  # solo el cargo no-docente va a SIPA
+    if es_magistrado_doc:
+        ri1 = rem_con_tope  # rem_docente con tope
     put_num(buf,  81,  93, ri1)                               # Rem. Imp. 1
     put_num(buf,  93, 102, 0)                                 # Asig. Familiares
     put_num(buf, 102, 111, 0)                                 # Aporte Voluntario
@@ -397,7 +411,7 @@ def procesar_fila(r):
     # FIX 4c: Rem Imp 2 para policía = rem_sin_tope + hs_extra (r[42] acumulado)
     # Para empleados comunes rem_sin_tope ya incluye r[42] en el calculo
     rem_imp2_policia = rem_sin_tope + hs_int if es_tipo_policial else None
-    if es_magistrado:
+    if es_magistrado or es_magistrado_doc:
         ri2 = rem_total
     elif es_tipo_policial:
         ri2 = rem_imp2_policia
@@ -434,17 +448,21 @@ def procesar_fila(r):
     put_num(buf, 319, 328, dias_trabajados)                   # Días trabajados (FIX 1)
     # RI5: policia/peni/docentes = rem_sin_tope; otros = rem_imp5 (con tope)
     ri5 = rem_sin_tope if (es_tipo_policial or es_docente_76 or es_docente_77) else rem_imp5
+    if es_magistrado_doc:
+        ri5 = rem_con_tope  # = RI1
     put_num(buf, 328, 340, ri5)                               # Rem. Imp. 5
     put(buf, 340, 341, "0")                                   # Trab. Convencionado
 
     ri6_final = min(rem_imp6_docente, rem_sin_tope) if es_docente_76 else \
                 (int(fval(r[47])) if (es_docente_77 and len(r) > 47) else 0)
+    if es_magistrado_doc:
+        ri6_final = round(rem_docente)  # rem_docente
     put_num(buf, 341, 353, ri6_final)                         # Rem. Imp. 6
 
     put_num(buf, 366, 378, premios_int)                       # Premios
 
-    # RI8: act=77 -> rem_total (doble empleo) o rem_sin_tope (puro); otros -> 0
-    ri8 = rem_total if es_doc77_doble_empleo else (rem_sin_tope if es_docente_77 else 0)
+    # RI8: act=77 -> rem_total (doble empleo) o rem_sin_tope (puro); act=101 -> 0; otros -> 0
+    ri8 = 0 if es_magistrado_doc else (rem_total if es_doc77_doble_empleo else (rem_sin_tope if es_docente_77 else 0))
     put_num(buf, 378, 390, ri8)                               # Rem. Imp. 8
 
     # RI7: docentes/policia/peni -> ri6_final o rem_sin_tope; magistrado -> rem_total; otros -> 0
@@ -454,6 +472,8 @@ def procesar_fila(r):
         ri7 = rem_sin_tope
     elif es_magistrado:
         ri7 = rem_total
+    elif es_magistrado_doc:
+        ri7 = round(rem_magistrado)  # rem_magistrado
     else:
         ri7 = 0
     put_num(buf, 390, 402, ri7)                               # Rem. Imp. 7
@@ -462,7 +482,7 @@ def procesar_fila(r):
     put_num(buf, 405, 417, cnc_int)                           # Conceptos No Remun.
     put_num(buf, 417, 429, 0)                                 # Maternidad
     put_num(buf, 429, 438, 0)                                 # Rectificación
-    ri9 = rem_total if es_magistrado else (rem_sin_tope if es_doc77_doble_empleo else rem_sin_tope)
+    ri9 = 0 if es_magistrado_doc else (rem_total if es_magistrado else (rem_sin_tope if es_doc77_doble_empleo else rem_sin_tope))
     put_num(buf, 438, 450, ri9)                               # Rem. Imp. 9
 
     return "".join(buf).rstrip()
