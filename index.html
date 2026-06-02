@@ -1,0 +1,2170 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<!-- © 2026 Agustina SC — Todos los derechos reservados.
+     Software registrado ante la Dirección Nacional del Derecho de Autor (DNDA).
+     Prohibida su reproducción, distribución o modificación sin autorización
+     expresa de la autora. -->
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Portal ASCript — SILI 8.0 — AGAP</title>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --green:#1D9E75;--green-dark:#0F6E56;--green-light:#E1F5EE;
+  --red:#A32D2D;--red-light:#FCEBEB;--red-border:#F09595;
+  --amber:#854F0B;--amber-light:#FAEEDA;--amber-border:#FAC775;
+  --blue:#185FA5;--blue-light:#E6F1FB;--blue-border:#85B7EB;
+  --bg:#F5F5F2;--bg2:#EFEFEB;--card:#fff;
+  --border:#E0DED8;--border2:#C8C6C0;
+  --text:#1A1A18;--text2:#6B6A65;--text3:#9B9A95;
+  --radius:8px;--radius-lg:12px;
+  --font:'Segoe UI',system-ui,sans-serif;--mono:'Consolas',monospace;
+}
+body{font-family:var(--font);font-size:13px;color:var(--text);background:var(--bg);min-height:100vh}
+.header{background:var(--card);border-bottom:1px solid var(--border);padding:10px 20px;display:flex;align-items:center;gap:10px;position:sticky;top:0;z-index:100}
+.logo{width:56px;height:32px;background:var(--green);border-radius:7px;display:flex;align-items:center;justify-content:center;color:#fff;font-weight:700;font-size:13px;flex-shrink:0}
+.ht{font-size:14px;font-weight:600}.hs{font-size:11px;color:var(--text2)}
+.badge{font-size:11px;padding:2px 9px;border-radius:20px;font-weight:600;margin-left:auto}
+.badge-admin{background:var(--green-light);color:var(--green-dark)}
+.badge-org{background:var(--blue-light);color:var(--blue)}
+.main{padding:18px;max-width:1100px;margin:0 auto}
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius-lg);padding:18px;margin-bottom:14px}
+.ct{font-size:14px;font-weight:600;margin-bottom:3px}
+.cs{font-size:11px;color:var(--text2);margin-bottom:14px}
+.login-wrap{max-width:380px;margin:50px auto}
+label{font-size:11px;color:var(--text2);display:block;margin-bottom:4px;margin-top:11px;font-weight:500}
+input[type=text],input[type=password],input[type=email],input[type=number],select,textarea{
+  width:100%;font-size:13px;padding:7px 10px;border:1px solid var(--border2);border-radius:var(--radius);
+  background:#fff;color:var(--text);outline:none;font-family:var(--font);transition:border-color .15s}
+input:focus,select:focus,textarea:focus{border-color:var(--green);box-shadow:0 0 0 2px rgba(29,158,117,.1)}
+input[readonly]{background:var(--bg2);color:var(--text2)}
+button{cursor:pointer;font-size:12px;padding:7px 13px;border-radius:var(--radius);border:1px solid var(--border2);
+  background:#fff;color:var(--text);transition:background .15s;font-family:var(--font);font-weight:500}
+button:hover{background:var(--bg2)}
+.btn-primary{background:var(--green);color:#fff;border-color:var(--green)}.btn-primary:hover{background:var(--green-dark)}
+.btn-full{width:100%;margin-top:13px;padding:9px;font-size:13px}
+.btn-sm{font-size:11px;padding:4px 10px}
+.btn-warn{background:var(--amber-light);color:var(--amber);border-color:var(--amber-border)}.btn-warn:hover{background:var(--amber-border)}
+.btn-danger{background:var(--red-light);color:var(--red);border-color:var(--red-border)}.btn-danger:hover{background:#F7C1C1}
+.btn-info{background:var(--blue-light);color:var(--blue);border-color:var(--blue-border)}
+
+.steps{display:flex;align-items:center;gap:4px;margin-bottom:16px;flex-wrap:wrap}
+.step{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:20px;font-size:11px;white-space:nowrap;color:var(--text2);font-weight:500}
+.step.active{background:var(--green-light);color:var(--green-dark)}
+.step.done{color:var(--green-dark)}
+.sn{width:18px;height:18px;border-radius:50%;background:var(--border2);display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;color:var(--text2)}
+.step.active .sn,.step.done .sn{background:var(--green);color:#fff}
+.step-sep{color:var(--border2);font-size:12px}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+.g4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px}
+
+.alert{border-radius:var(--radius);padding:9px 12px;font-size:12px;margin-bottom:10px;display:flex;align-items:flex-start;gap:8px;line-height:1.5}
+.a-ok{background:var(--green-light);color:var(--green-dark);border:1px solid #5DCAA5}
+.a-err{background:var(--red-light);color:var(--red);border:1px solid var(--red-border)}
+.a-warn{background:var(--amber-light);color:var(--amber);border:1px solid var(--amber-border)}
+.a-info{background:var(--blue-light);color:var(--blue);border:1px solid var(--blue-border)}
+.ai{flex-shrink:0;margin-top:1px;font-size:14px}
+
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{text-align:left;padding:7px 9px;font-weight:600;color:var(--text2);border-bottom:1px solid var(--border);font-size:11px;background:var(--bg2)}
+td{padding:7px 9px;border-bottom:1px solid var(--border);vertical-align:middle}
+tr:last-child td{border-bottom:none}
+.pill{font-size:10px;padding:2px 7px;border-radius:20px;font-weight:600;display:inline-block}
+.p-ok{background:var(--green-light);color:var(--green-dark)}
+.p-err{background:var(--red-light);color:var(--red)}
+.p-warn{background:var(--amber-light);color:var(--amber)}
+.p-blue{background:var(--blue-light);color:var(--blue)}
+
+.tabs{display:flex;border-bottom:1px solid var(--border);margin-bottom:16px}
+.tab{padding:8px 14px;font-size:12px;cursor:pointer;color:var(--text2);border-bottom:2px solid transparent;margin-bottom:-1px;background:none;border-top:none;border-left:none;border-right:none;border-radius:0;font-weight:500}
+.tab:hover{color:var(--text);background:none}.tab.active{color:var(--green-dark);border-bottom-color:var(--green);font-weight:600}
+
+.subtabs{display:flex;gap:6px;padding:10px 18px 0;border-bottom:1px solid var(--border);flex-wrap:wrap}
+.subtab{padding:6px 14px;font-size:11px;border-radius:6px 6px 0 0;border:1px solid transparent;cursor:pointer;font-weight:500;background:transparent;color:var(--text2);margin-bottom:-1px}
+.subtab:hover{background:var(--bg2);color:var(--text)}
+.subtab.active{background:#fff;color:var(--green-dark);border-color:var(--border);border-bottom-color:#fff;font-weight:600}
+
+.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:14px}
+.metric{background:var(--bg2);border-radius:var(--radius);padding:10px;border:1px solid var(--border)}
+.mv{font-size:20px;font-weight:700}.ml{font-size:10px;color:var(--text2);margin-top:2px}
+
+.hidden{display:none!important}
+.prog{height:3px;background:var(--bg2);border-radius:3px;overflow:hidden;margin-top:10px}
+.prog-f{height:100%;background:var(--green);border-radius:3px;transition:width .3s}
+
+.drop-zone{border:2px dashed var(--border2);border-radius:var(--radius-lg);padding:26px 16px;text-align:center;cursor:pointer;transition:border-color .2s}
+.drop-zone:hover,.drop-zone.drag{border-color:var(--green);background:rgba(29,158,117,.03)}
+.dz-icon{font-size:28px;margin-bottom:8px;opacity:.5}
+.dz-text{font-size:13px;color:var(--text2)}.dz-text strong{color:var(--text)}
+.dz-sub{font-size:11px;color:var(--text3);margin-top:3px}
+
+.file-row{display:flex;align-items:center;gap:9px;background:var(--bg2);border-radius:var(--radius);padding:9px 12px;margin-top:10px;border:1px solid var(--border)}
+.file-tag{width:32px;height:32px;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0;background:var(--green-light);color:var(--green-dark)}
+.fn{font-size:12px;font-weight:600}.fs{font-size:10px;color:var(--text2)}
+
+.err-list{border:1px solid var(--border);border-radius:var(--radius);max-height:220px;overflow-y:auto}
+.err-item{padding:5px 10px;border-bottom:1px solid var(--border);font-size:11px;display:grid;grid-template-columns:30px 90px 1fr 70px;gap:6px;align-items:center}
+.err-item:last-child{border-bottom:none}
+.err-crit{color:var(--red);font-weight:600}.err-adv{color:var(--amber)}
+
+/* TABLA AGENTES */
+.agent-row{cursor:pointer;transition:background .1s}
+.agent-row:hover td{background:var(--green-light)}
+.search-bar{display:flex;gap:8px;margin-bottom:12px;align-items:center}
+.search-bar input{flex:1}
+
+/* PANEL LATERAL */
+.detail-panel{
+  position:fixed;top:0;right:0;width:700px;height:100vh;background:#fff;
+  border-left:1px solid var(--border);z-index:200;display:flex;flex-direction:column;
+  box-shadow:-4px 0 24px rgba(0,0,0,.12);
+  transform:translateX(100%);transition:transform .25s ease}
+.detail-panel.open{transform:translateX(0)}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.3);z-index:199;display:none}
+.overlay.show{display:block}
+.detail-header{padding:14px 18px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:10px;background:var(--bg2);flex-shrink:0}
+.detail-body{flex:1;overflow-y:auto;padding:16px 18px}
+.detail-footer{padding:12px 18px;border-top:1px solid var(--border);display:flex;gap:8px;justify-content:flex-end;background:#fff;flex-shrink:0}
+
+.field-group{margin-bottom:16px}
+.field-group-title{font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)}
+.calc-badge{font-size:9px;padding:1px 5px;border-radius:8px;background:var(--green-light);color:var(--green-dark);margin-left:5px;font-weight:600}
+
+.ro-val{padding:7px 10px;background:var(--bg2);border-radius:var(--radius);font-size:12px;font-weight:600;border:1px solid var(--border);font-family:var(--mono)}
+
+.ddjj-preview{border:1px solid var(--border);border-radius:var(--radius);font-size:11px;overflow:hidden}
+.ddjj-hdr{background:var(--bg2);padding:10px 14px;border-bottom:1px solid var(--border)}
+.ddjj-body{padding:12px 14px}
+.ddjj-sec{margin-bottom:10px}
+.ddjj-sec-t{font-weight:700;font-size:10px;text-transform:uppercase;letter-spacing:.5px;color:var(--text2);border-bottom:1px solid var(--border);padding-bottom:3px;margin-bottom:6px}
+.ddjj-g{display:grid;grid-template-columns:1fr 1fr;gap:2px 16px}
+.ddjj-r{display:flex;justify-content:space-between;padding:2px 0}
+.ddjj-l{color:var(--text2)}.ddjj-v{font-weight:700;font-family:var(--mono);font-size:10px}
+.ddjj-decla{font-size:10px;color:var(--text2);font-style:italic;border-top:1px solid var(--border);padding-top:8px;margin-top:8px;line-height:1.6}
+.sign-row{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:14px}
+.sign-box{border-top:1px solid var(--text);padding-top:4px;font-size:10px}
+.btn-row{display:flex;gap:8px;margin-top:12px;justify-content:flex-end;flex-wrap:wrap}
+
+.spinner{display:inline-block;width:12px;height:12px;border:2px solid rgba(255,255,255,.3);border-top-color:#fff;border-radius:50%;animation:spin .7s linear infinite;margin-right:5px;vertical-align:middle}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* Diálogo de confirmación propio */
+.confirm-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:400;display:flex;align-items:center;justify-content:center}
+.confirm-box{background:#fff;border-radius:var(--radius-lg);padding:24px;max-width:340px;width:90%;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.confirm-box .ct{font-size:14px;font-weight:600;margin-bottom:8px}
+.confirm-box .cs{font-size:12px;color:var(--text2);margin-bottom:18px;line-height:1.5}
+.confirm-btns{display:flex;gap:8px;justify-content:flex-end}
+
+/* Notificación de guardado */
+.save-toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--green-dark);color:#fff;padding:8px 18px;border-radius:20px;font-size:12px;font-weight:600;z-index:300;opacity:0;transition:opacity .3s;pointer-events:none}
+.save-toast.show{opacity:1}
+
+/* Modal reutilizar agentes */
+.reutilizar-box{background:#fff;border-radius:var(--radius-lg);padding:24px;max-width:400px;width:92%;box-shadow:0 8px 32px rgba(0,0,0,.2)}
+.reutilizar-box .rt{font-size:14px;font-weight:700;margin-bottom:6px}
+.reutilizar-box .rs{font-size:12px;color:var(--text2);line-height:1.6;margin-bottom:16px}
+.reutilizar-period{display:flex;gap:12px;align-items:center;background:var(--bg2);border-radius:var(--radius);padding:10px 14px;margin-bottom:16px;font-size:12px}
+.reutilizar-period .rp-arrow{color:var(--green);font-weight:700;font-size:16px}
+.reutilizar-period .rp-val{font-family:var(--mono);font-weight:700;font-size:13px}
+.reutilizar-period .rp-lbl{font-size:10px;color:var(--text2)}
+
+/* ── BORRADOR BANNER ── */
+.borrador-banner{
+  background:var(--amber-light);border:1px solid var(--amber-border);border-radius:var(--radius);
+  padding:10px 14px;margin-bottom:12px;display:flex;align-items:center;gap:10px;font-size:12px;
+}
+.sync-indicator{
+  font-size:10px;padding:2px 8px;border-radius:10px;font-weight:600;
+  display:inline-flex;align-items:center;gap:4px;
+}
+.sync-ok{background:var(--green-light);color:var(--green-dark);}
+.sync-ing{background:var(--amber-light);color:var(--amber);}
+.sync-err{background:var(--red-light);color:var(--red);}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div class="logo">ASCript</div>
+  <div><div class="ht">Portal de Ingreso — SILI 8.0</div><div class="hs">AGAP — Dirección Provincial de Gestión Previsional de Activos</div></div>
+  <span class="badge hidden" id="hbadge"></span>
+  <!-- Indicador de sincronización -->
+  <span class="sync-indicator sync-ok hidden" id="sync-indicator">✓ Guardado</span>
+  <button class="btn-sm hidden" id="btn-logout" onclick="doLogout()" style="margin-left:8px">Salir</button>
+</div>
+
+<!-- Toast guardado -->
+<div class="save-toast" id="save-toast">✓ Cambios guardados</div>
+
+<!-- Diálogo de confirmación propio -->
+<div class="confirm-overlay hidden" id="confirm-overlay">
+  <div class="confirm-box">
+    <div class="ct" id="confirm-title">Confirmar</div>
+    <div class="cs" id="confirm-msg"></div>
+    <div class="confirm-btns">
+      <button class="btn-sm" id="confirm-no">Cancelar</button>
+      <button class="btn-sm btn-danger" id="confirm-yes">Eliminar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Overlay y panel lateral -->
+<div class="overlay" id="overlay" onclick="cerrarPanel()"></div>
+<div class="detail-panel" id="detail-panel">
+  <div class="detail-header">
+    <button class="btn-sm" onclick="cerrarPanel()" style="flex-shrink:0">✕ Cerrar</button>
+    <div style="flex:1;min-width:0">
+      <div class="fn" id="dp-nombre" style="overflow:hidden;text-overflow:ellipsis;white-space:nowrap">—</div>
+      <div class="fs" id="dp-cuil">—</div>
+    </div>
+    <span class="pill p-ok" id="dp-badge">Activo</span>
+  </div>
+  <div class="subtabs" id="dp-subtabs">
+    <button class="subtab active" onclick="dpTab('personales')">Datos Personales</button>
+    <button class="subtab" onclick="dpTab('laborales')">Datos Laborales</button>
+    <button class="subtab" onclick="dpTab('ss')">Seguridad Social</button>
+    <button class="subtab" onclick="dpTab('os')">Obra Social</button>
+  </div>
+  <div class="detail-body" id="dp-body" style="padding-top:12px"></div>
+  <div class="detail-footer">
+    <button class="btn-sm btn-danger" onclick="eliminarAgente()">🗑 Eliminar agente</button>
+    <div style="flex:1"></div>
+    <button class="btn-sm" onclick="cerrarPanel()">Cancelar</button>
+    <button class="btn-sm btn-primary" onclick="guardarAgente()">✓ Guardar cambios</button>
+  </div>
+</div>
+
+<div class="main" id="main-content">
+
+<!-- LOGIN -->
+<div id="screen-login" class="login-wrap">
+  <div class="card">
+    <div class="ct">Acceso al portal</div>
+    <div class="cs">Seleccioná tu organismo e ingresá la clave asignada</div>
+    <label>Organismo</label>
+    <select id="sel-org"><option value="">— Seleccioná —</option><option value="ADMIN">★ Administrador (ASCript)</option></select>
+    <label>Clave</label>
+    <input type="password" id="inp-pass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()">
+    <div id="login-err" class="alert a-err hidden" style="margin-top:8px"><span class="ai">✕</span><span id="login-err-msg">Clave incorrecta</span></div>
+    <button class="btn-primary btn-full" id="btn-login" onclick="doLogin()">Ingresar</button>
+    <p style="font-size:10px;color:var(--text2);text-align:center;margin-top:12px">Consultas: activos-agap@catamarca.gov.ar</p>
+  </div>
+</div>
+
+<!-- ORG PANEL -->
+<div id="screen-org" class="hidden">
+  <!-- Banner de borrador -->
+  <div class="borrador-banner hidden" id="borrador-banner">
+    <span style="font-size:16px">📋</span>
+    <div style="flex:1">
+      <strong>Tenés un borrador guardado</strong> con <span id="borrador-count">0</span> agentes cargados.
+      Podés continuar donde lo dejaste o empezar de cero.
+    </div>
+    <button class="btn-sm btn-primary" onclick="cargarBorrador()">Continuar borrador</button>
+    <button class="btn-sm btn-danger" onclick="descartarBorrador()">Descartar</button>
+  </div>
+
+  <div class="steps" id="steps-bar">
+    <div class="step active" id="step-1"><div class="sn">1</div>Datos del organismo</div>
+    <div class="step-sep">›</div>
+    <div class="step" id="step-2"><div class="sn">2</div>Cargar agentes</div>
+    <div class="step-sep">›</div>
+    <div class="step" id="step-3"><div class="sn">3</div>Validaciones</div>
+    <div class="step-sep">›</div>
+    <div class="step" id="step-4"><div class="sn">4</div>DDJJ</div>
+    <div class="step-sep">›</div>
+    <div class="step" id="step-5"><div class="sn">5</div>Confirmar envío</div>
+  </div>
+
+  <!-- PASO 1 -->
+  <div id="paso-1" class="card">
+    <div class="ct">Datos del organismo</div>
+    <div class="cs">Completá los datos institucionales que figurarán en la DDJJ. Todos los campos con * son obligatorios.</div>
+    <div>
+      <label>Organismo</label><input type="text" id="d-organismo" readonly>
+    </div>
+    <div><label>Dirección *</label><input type="text" id="d-direccion" placeholder="Calle y número"></div>
+    <div class="g2">
+      <div><label>Teléfono</label><input type="text" id="d-telefono" placeholder="Opcional"></div>
+      <div><label>E-Mail institucional</label><input type="text" id="d-email" placeholder="Opcional"></div>
+    </div>
+    <div class="g2">
+      <div><label>Cargo Autoridad Máxima *</label><input type="text" id="d-cargo-auto" placeholder="Intendente Municipal"></div>
+      <div><label>Apellido y Nombre (Autoridad) *</label><input type="text" id="d-nombre-auto" placeholder="APELLIDO NOMBRE"></div>
+    </div>
+    <div class="g2">
+      <div><label>Cargo Responsable R.H. *</label><input type="text" id="d-cargo-rh" placeholder="Jefe de Liquidación"></div>
+      <div><label>Apellido y Nombre (Resp. R.H.) *</label><input type="text" id="d-nombre-rh" placeholder="APELLIDO NOMBRE"></div>
+    </div>
+    <div class="g2">
+      <div><label>Período * <span style="color:var(--text2);font-weight:400">(formato AAAAMM — ej: 202603)</span></label>
+        <input type="text" id="d-periodo" placeholder="202603" maxlength="6" oninput="this.value=this.value.replace(/\D/g,'')"></div>
+      <div><label>Tipo de declaración</label>
+        <select id="d-tipo"><option value="0">0 — Original</option><option value="1">1 — Rectificativa 1</option><option value="2">2 — Rectificativa 2</option></select>
+      </div>
+    </div>
+    <div id="paso1-err" class="alert a-err hidden" style="margin-top:10px"><span class="ai">✕</span><span id="paso1-err-msg"></span></div>
+    <button class="btn-primary btn-full" onclick="irPaso2()">Continuar →</button>
+  </div>
+
+  <!-- PASO 2 -->
+  <div id="paso-2" class="hidden">
+    <div class="card">
+      <div class="ct">Cargar datos de agentes</div>
+      <div class="cs">Importá el CSV del SILI o cargá agentes manualmente uno por uno. Los cambios se guardan automáticamente.</div>
+      <div class="g2">
+        <div>
+          <div class="drop-zone" id="dz-csv" onclick="document.getElementById('fi-csv').click()"
+            ondragover="event.preventDefault();this.classList.add('drag')"
+            ondragleave="this.classList.remove('drag')"
+            ondrop="dropFile(event)">
+            <div class="dz-icon">📄</div>
+            <p class="dz-text"><strong>Importar CSV del SILI</strong></p>
+            <p class="dz-sub">Arrastrá o hacé clic · formato SILI 8.0</p>
+          </div>
+          <input type="file" id="fi-csv" accept=".csv,.txt" class="hidden" onchange="loadCSV(this.files[0])">
+          <div id="csv-info" class="hidden"></div>
+        </div>
+        <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:12px;padding:20px;border:1px solid var(--border);border-radius:var(--radius-lg)">
+          <div style="font-size:22px;opacity:.4">✏️</div>
+          <div style="font-size:12px;color:var(--text2);text-align:center">¿No tenés archivo CSV?<br>Cargá agentes manualmente</div>
+          <button class="btn-primary" onclick="abrirNuevoAgente()">+ Nuevo agente</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- TABLA AGENTES -->
+    <div class="card hidden" id="agentes-card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+        <div>
+          <div class="ct" style="margin:0" id="agentes-count">0 agentes</div>
+          <div style="font-size:11px;color:var(--text2)">Hacé clic en cualquier fila para ver y editar los datos del agente</div>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          <button class="btn-sm" onclick="abrirNuevoAgente()">+ Nuevo agente</button>
+          <button class="btn-sm btn-primary" onclick="irPaso3()">Validar y continuar →</button>
+        </div>
+      </div>
+      <div class="search-bar">
+        <input type="text" id="search-agente" placeholder="Buscar por CUIL, nombre o legajo..." oninput="renderTabla()">
+        <select id="filtro-os" onchange="renderTabla()" style="width:200px">
+          <option value="">Todas las obras sociales</option>
+          <option value="009960">009960 — OSEP</option>
+          <option value="001102">001102 — OSPLAD</option>
+        </select>
+      </div>
+      <div style="overflow-x:auto">
+        <table>
+          <thead>
+            <tr>
+              <th width="36">#</th>
+              <th>CUIL</th>
+              <th>Apellido y Nombre</th>
+              <th>Legajo</th>
+              <th>Actividad</th>
+              <th>Rem. Total</th>
+              <th>O.S.</th>
+              <th>Días</th>
+              <th>Sexo</th>
+              <th width="40"></th>
+            </tr>
+          </thead>
+          <tbody id="agentes-tbody"></tbody>
+        </table>
+      </div>
+    </div>
+    <button class="btn-sm" style="margin-top:4px" onclick="irPaso1()">← Volver al paso 1</button>
+  </div>
+
+  <!-- PASO 3 -->
+  <div id="paso-3" class="card hidden">
+    <div class="ct">Resultado de validaciones</div>
+    <div class="cs">Revisá los errores. Podés volver a editar agentes antes de continuar.</div>
+    <div id="val-resumen"></div>
+    <div id="val-detalle" class="hidden" style="margin-top:12px">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+        <span style="font-size:12px;font-weight:600">Detalle por tipo de error</span>
+        <div style="display:flex;gap:5px">
+          <button class="btn-sm" onclick="filtrarErr('CRÍTICO')">Solo críticos</button>
+          <button class="btn-sm" onclick="filtrarErr('ADVERTENCIA')">Solo advertencias</button>
+          <button class="btn-sm" onclick="filtrarErr('TODOS')">Todos</button>
+        </div>
+      </div>
+      <div class="err-list" id="err-list"></div>
+    </div>
+    <div class="btn-row" style="margin-top:14px">
+      <button class="btn-sm" onclick="irPaso2show()">← Editar agentes</button>
+      <button class="btn-warn hidden" id="btn-aceptar-warn" onclick="irPaso4()">Enviar con advertencias →</button>
+      <button class="btn-primary hidden" id="btn-continuar-ok" onclick="irPaso4()">Continuar →</button>
+    </div>
+  </div>
+
+  <!-- PASO 4 -->
+  <div id="paso-4" class="card hidden">
+    <div class="ct">DDJJ — Nota de presentación</div>
+    <div class="cs">Revisá los totales calculados del CSV. Si todo es correcto, confirmá el envío.</div>
+    <div class="ddjj-preview" id="ddjj-preview"></div>
+    <div class="btn-row">
+      <button class="btn-sm" onclick="irPaso3show()">← Volver</button>
+      <button class="btn-sm btn-info" onclick="descargarPDF()">⬇ Descargar PDF</button>
+      <button class="btn-primary" onclick="irPaso5()">Confirmar y enviar →</button>
+    </div>
+  </div>
+
+  <!-- PASO 5 -->
+  <div id="paso-5" class="card hidden">
+    <div id="paso5-content"></div>
+  </div>
+
+  <!-- HISTORIAL -->
+  <div class="card" style="margin-top:4px">
+    <div class="ct">Historial de envíos</div>
+    <div class="cs">Envíos de esta sesión</div>
+    <div id="hist-table"><p style="font-size:11px;color:var(--text2)">Sin envíos aún.</p></div>
+  </div>
+</div>
+
+<!-- ADMIN -->
+<div id="screen-admin" class="hidden">
+  <div class="tabs">
+    <button class="tab active" onclick="adminTab('resumen')">Resumen</button>
+    <button class="tab" onclick="adminTab('envios')">Todos los envíos</button>
+    <button class="tab" onclick="adminTab('organismos')">Organismos</button>
+    <button class="tab" onclick="adminTab('parametros')">⚙ Parámetros</button>
+  </div>
+  <div id="at-resumen">
+    <div class="metric-grid">
+      <div class="metric"><div class="mv" id="m-tot">0</div><div class="ml">Envíos totales</div></div>
+      <div class="metric"><div class="mv" id="m-ok" style="color:var(--green-dark)">0</div><div class="ml">Sin errores</div></div>
+      <div class="metric"><div class="mv" id="m-warn" style="color:var(--amber)">0</div><div class="ml">Con advertencias</div></div>
+      <div class="metric"><div class="mv" id="m-crit" style="color:var(--red)">0</div><div class="ml">Con críticos</div></div>
+    </div>
+    <div class="card"><div class="ct" style="margin-bottom:10px">Últimos envíos</div><div id="a-recent"><p style="font-size:11px;color:var(--text2)">Sin envíos.</p></div></div>
+  </div>
+  <div id="at-envios" class="hidden">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+        <div class="ct" style="margin:0">Todos los envíos</div>
+        <div style="display:flex;gap:6px">
+          <input type="text" id="filtro-org" placeholder="Filtrar organismo..." style="width:160px" oninput="renderAdminAll()">
+          <button class="btn-sm btn-primary" onclick="exportarRegistroCSV()">Exportar registro</button>
+        </div>
+      </div>
+      <div id="a-all"></div>
+    </div>
+  </div>
+  <div id="at-organismos" class="hidden">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div class="ct" style="margin:0">Organismos registrados</div>
+          <div style="font-size:11px;color:var(--text2)">Gestioná organismos y claves de acceso</div>
+        </div>
+        <button class="btn-sm btn-primary" onclick="abrirModalOrg()">+ Agregar organismo</button>
+      </div>
+      <div class="search-bar" style="margin-bottom:10px">
+        <input type="text" id="filtro-admin-org" placeholder="Buscar organismo..." oninput="renderAdminOrgs()">
+      </div>
+      <div id="a-orgs"></div>
+    </div>
+  </div>
+
+  <div id="at-parametros" class="hidden">
+    <div class="card">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:14px">
+        <div>
+          <div class="ct" style="margin:0">Parámetros de cálculo</div>
+          <div style="font-size:11px;color:var(--text2)">Actualizá topes, bases y alícuotas sin modificar el código. Los cambios se aplican inmediatamente en la sesión actual.</div>
+        </div>
+        <button class="btn-sm btn-primary" onclick="guardarParametros()">✓ Guardar cambios</button>
+      </div>
+      <div id="param-ok" class="alert a-ok hidden" style="margin-bottom:10px"><span class="ai">✓</span>Parámetros actualizados correctamente.</div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">ANSES — Seguridad Social</div>
+      <div class="g4" style="margin-bottom:12px">
+        <div><label>Tope mín. aporte trabajador</label><input type="number" id="pm-anses-aporte-min" step="0.01"></div>
+        <div><label>Tope máx. aporte trabajador</label><input type="number" id="pm-anses-aporte-max" step="0.01"></div>
+        <div><label>Tope mín. contrib. patronal</label><input type="number" id="pm-anses-contrib-min" step="0.01"></div>
+        <div><label>Base máxima imponible</label><input type="number" id="pm-anses-base-max" step="0.01"></div>
+      </div>
+      <div class="g4" style="margin-bottom:16px">
+        <div><label>Alícuota aporte trabajador (%)</label><input type="number" id="pm-pct-aporte" step="0.001" placeholder="11"></div>
+        <div><label>Alícuota contrib. patronal (%)</label><input type="number" id="pm-pct-contrib" step="0.001" placeholder="10.753"></div>
+        <div></div><div></div>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">OSEP — Obra Social Provincial</div>
+      <div class="g4" style="margin-bottom:16px">
+        <div><label>Mín. aporte afiliado (4.5%)</label><input type="number" id="pm-osep-aporte-min" step="0.01"></div>
+        <div><label>Mín. contrib. patronal (9%)</label><input type="number" id="pm-osep-contrib-min" step="0.01"></div>
+        <div><label>Mín. fondo trasplante (0.5%)</label><input type="number" id="pm-osep-trasp-min" step="0.01"></div>
+        <div><label>Base mín. afil. voluntarios</label><input type="number" id="pm-osep-base-min" step="0.01"></div>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Caja Complementaria 82 Móvil</div>
+      <div class="g4" style="margin-bottom:16px">
+        <div><label>Tope mín. aporte/contrib.</label><input type="number" id="pm-caja-min" step="0.01"></div>
+        <div><label>Sueldo del Gobernador</label><input type="number" id="pm-caja-gob" step="0.01"></div>
+        <div style="padding-top:22px;font-size:11px;color:var(--text2)" id="pm-caja-max-lbl">Tope máx: —</div>
+        <div></div>
+      </div>
+
+      <div style="font-size:10px;font-weight:700;color:var(--text2);text-transform:uppercase;letter-spacing:.6px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid var(--border)">Seguros (valores fijos)</div>
+      <div class="g4">
+        <div><label>Seg. Obligatorio</label><input type="number" id="pm-svco" step="0.01"></div>
+        <div><label>Seg. Sepelio</label><input type="number" id="pm-ss" step="0.01"></div>
+        <div></div><div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Modal gestión de organismo -->
+<div class="confirm-overlay hidden" id="modal-org">
+  <div class="confirm-box" style="max-width:420px">
+    <div class="ct" id="modal-org-title">Organismo</div>
+    <div style="margin-top:14px">
+      <div class="g2">
+        <div>
+          <label>Código numérico *</label>
+          <input type="number" id="mo-cod" placeholder="ej: 48" style="width:100%">
+        </div>
+        <div>
+          <label>Clave de acceso *</label>
+          <input type="text" id="mo-clave" placeholder="mín. 4 caracteres" style="width:100%">
+        </div>
+      </div>
+      <div style="margin-top:10px">
+        <label>Nombre del organismo *</label>
+        <input type="text" id="mo-nombre" placeholder="Nombre completo" style="width:100%">
+      </div>
+      <div id="mo-err" class="alert a-err hidden" style="margin-top:10px"><span class="ai">✕</span><span id="mo-err-msg"></span></div>
+    </div>
+    <div class="confirm-btns" style="margin-top:16px">
+      <button class="btn-sm btn-danger hidden" id="mo-btn-del" onclick="eliminarOrgModal()">Eliminar</button>
+      <div style="flex:1"></div>
+      <button class="btn-sm" onclick="cerrarModalOrg()">Cancelar</button>
+      <button class="btn-sm btn-primary" id="mo-btn-save" onclick="guardarOrgModal()">Guardar</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal reutilizar agentes de borrador para nuevo período -->
+<div class="confirm-overlay hidden" id="modal-reutilizar">
+  <div class="reutilizar-box">
+    <div class="rt">📋 ¿Reutilizás los agentes del borrador?</div>
+    <div class="rs">El borrador guardado corresponde a un período distinto al que ingresaste. ¿Querés copiar los agentes del borrador y actualizarles el período automáticamente?</div>
+    <div class="reutilizar-period">
+      <div style="flex:1;text-align:center">
+        <div class="rp-lbl">Borrador guardado</div>
+        <div class="rp-val" id="rp-periodo-anterior">—</div>
+      </div>
+      <div class="rp-arrow">→</div>
+      <div style="flex:1;text-align:center">
+        <div class="rp-lbl">Período nuevo</div>
+        <div class="rp-val" id="rp-periodo-nuevo">—</div>
+      </div>
+    </div>
+    <div class="rs" style="color:var(--amber);background:var(--amber-light);border:1px solid var(--amber-border);border-radius:var(--radius);padding:8px 11px;margin-bottom:16px">
+      ⚠ Se copiará la estructura de agentes. Revisá los datos antes de enviar, ya que algunos valores (remuneraciones, días, etc.) pueden haber cambiado entre períodos.
+    </div>
+    <div class="confirm-btns">
+      <button class="btn-sm btn-danger" id="reutilizar-no">No, descartar borrador</button>
+      <div style="flex:1"></div>
+      <button class="btn-sm" id="reutilizar-ignorar">Continuar sin agentes</button>
+      <button class="btn-sm btn-primary" id="reutilizar-si">Sí, copiar agentes →</button>
+    </div>
+  </div>
+</div>
+
+  <div style="text-align:center;font-size:10px;color:var(--text3);padding:12px 0 18px;margin-top:8px">
+    © 2026 ASCript — Todos los derechos reservados
+  </div>
+</div><!-- /main -->
+
+<script>
+// ══════════════════════════════════════════════════════════════════════
+// SUPABASE — PERSISTENCIA DE BORRADORES
+// ══════════════════════════════════════════════════════════════════════
+const SUPABASE_URL = 'https://pllltatkepnzxcqnfbfl.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBsbGx0YXRrZXBuenhjcW5mYmZsIiwicm9sZSI6ImFub24iLCJpYXQiOjE3Nzg2NDM1MTgsImV4cCI6MjA5NDIxOTUxOH0.eVgxnzt9xdImkNSWeEryfs1Drc19fHjEQbkTW4EFxeY';
+const SB_HEADERS = {
+  'Content-Type': 'application/json',
+  'apikey': SUPABASE_KEY,
+  'Authorization': 'Bearer ' + SUPABASE_KEY,
+  'Prefer': 'return=minimal'
+};
+
+let syncTimeout = null;
+let syncEstado  = 'ok';
+let borradorAgentes = [];
+
+function setSyncIndicator(estado, texto){
+  const el = document.getElementById('sync-indicator');
+  if(!el) return;
+  el.classList.remove('hidden','sync-ok','sync-ing','sync-err');
+  el.classList.add('sync-' + estado);
+  el.textContent = texto;
+  syncEstado = estado;
+}
+
+async function sbGuardar(organismo, agentes){
+  const resp = await fetch(`${SUPABASE_URL}/rest/v1/borradores`, {
+    method: 'POST',
+    headers: { ...SB_HEADERS, 'Prefer': 'resolution=merge-duplicates,return=minimal' },
+    body: JSON.stringify({ organismo, agentes, actualizado: new Date().toISOString() })
+  });
+  if(!resp.ok) throw new Error('Error guardando: ' + resp.status);
+}
+
+async function sbCargar(organismo){
+  const resp = await fetch(
+    `${SUPABASE_URL}/rest/v1/borradores?organismo=eq.${encodeURIComponent(organismo)}&select=agentes,actualizado`,
+    { method: 'GET', headers: SB_HEADERS }
+  );
+  if(!resp.ok) throw new Error('Error cargando: ' + resp.status);
+  const data = await resp.json();
+  return data.length > 0 ? data[0] : null;
+}
+
+async function sbLimpiar(organismo){
+  await fetch(
+    `${SUPABASE_URL}/rest/v1/borradores?organismo=eq.${encodeURIComponent(organismo)}`,
+    { method: 'DELETE', headers: SB_HEADERS }
+  );
+}
+
+function guardarEnSheets(){
+  if(!currentOrg || currentOrg === 'ADMIN') return;
+  clearTimeout(syncTimeout);
+  setSyncIndicator('ing', '⟳ Guardando...');
+  syncTimeout = setTimeout(async ()=>{
+    try{
+      await sbGuardar(currentOrg, agentes);
+      setSyncIndicator('ok', '✓ Guardado');
+    } catch(e){
+      console.error('Error guardando:', e);
+      setSyncIndicator('err', '✕ Error al guardar');
+    }
+  }, 1500);
+}
+
+async function limpiarEnSheets(){
+  if(!currentOrg || currentOrg === 'ADMIN') return;
+  try{ await sbLimpiar(currentOrg); } catch(e){ console.error('Error limpiando:', e); }
+}
+
+let borradorPeriodo = ''; // período detectado en el borrador guardado
+
+async function verificarBorrador(){
+  if(!currentOrg || currentOrg === 'ADMIN') return;
+  try{
+    const resultado = await sbCargar(currentOrg);
+    if(resultado && resultado.agentes && resultado.agentes.length > 0){
+      borradorAgentes = resultado.agentes;
+      // Detectar el período predominante en los agentes del borrador
+      const periodos = borradorAgentes.map(a => (a.periodo||'').trim()).filter(Boolean);
+      if(periodos.length > 0){
+        // Tomar el período más frecuente
+        const freq = periodos.reduce((acc, p) => { acc[p] = (acc[p]||0)+1; return acc; }, {});
+        borradorPeriodo = Object.keys(freq).sort((a,b)=>freq[b]-freq[a])[0] || '';
+      } else {
+        borradorPeriodo = '';
+      }
+      document.getElementById('borrador-count').textContent = borradorAgentes.length;
+      document.getElementById('borrador-banner').classList.remove('hidden');
+    }
+  } catch(e){ console.error('Error verificando borrador:', e); }
+}
+
+function cargarBorrador(){
+  agentes = [...borradorAgentes];
+  document.getElementById('borrador-banner').classList.add('hidden');
+  setStep(2); mostrarTablaAgentes();
+  mostrarToast(`✓ ${agentes.length} agentes restaurados`);
+}
+
+function descartarBorrador(){
+  confirmarAccion(
+    '¿Descartar borrador?',
+    `Se eliminarán los ${borradorAgentes.length} agentes guardados.`,
+    async function(){
+      borradorAgentes = [];
+      borradorPeriodo = '';
+      document.getElementById('borrador-banner').classList.add('hidden');
+      await limpiarEnSheets();
+      mostrarToast('🗑 Borrador descartado');
+    }, 'Descartar'
+  );
+}
+
+// ── MODAL REUTILIZAR AGENTES PARA NUEVO PERÍODO ────────────────────────
+function mostrarModalReutilizar(periodoNuevo, callbackSi, callbackNo, callbackIgnorar){
+  document.getElementById('rp-periodo-anterior').textContent = borradorPeriodo || '(desconocido)';
+  document.getElementById('rp-periodo-nuevo').textContent = periodoNuevo;
+  const modal = document.getElementById('modal-reutilizar');
+  modal.classList.remove('hidden');
+
+  // Clonar botones para limpiar listeners previos
+  ['reutilizar-si','reutilizar-no','reutilizar-ignorar'].forEach(id => {
+    const btn = document.getElementById(id);
+    const clone = btn.cloneNode(true);
+    btn.parentNode.replaceChild(clone, btn);
+  });
+
+  document.getElementById('reutilizar-si').addEventListener('click', function(){
+    modal.classList.add('hidden');
+    callbackSi();
+  });
+  document.getElementById('reutilizar-no').addEventListener('click', function(){
+    modal.classList.add('hidden');
+    callbackNo();
+  });
+  document.getElementById('reutilizar-ignorar').addEventListener('click', function(){
+    modal.classList.add('hidden');
+    callbackIgnorar();
+  });
+}
+// ══════════════════════════════════════════════════════════════════════
+// CONFIG EMAILJS
+// ══════════════════════════════════════════════════════════════════════
+const EMAILJS_SERVICE_ID  = 'service_18t40nc';
+const EMAILJS_TEMPLATE_ID = 'template_ajhcmhq';
+const EMAILJS_PUBLIC_KEY  = '7V-OzEjlWq6_Egg8d';
+const EMAIL_DESTINO = 'activos-agap@catamarca.gov.ar';
+const FORMSPREE_ID = 'xpqbwjnz';
+
+// ── ORGANISMOS ─────────────────────────────────────────────────────────
+const ORGS=[
+  {c:37,n:"Aconquija"},{c:18,n:"Ancasti"},{c:7,n:"Andalgala"},{c:80,n:"Antofagasta"},
+  {c:36,n:"Belen"},{c:83,n:"Capayan"},{c:8,n:"Capital"},{c:6,n:"Completa"},
+  {c:71,n:"Concejo Deliberante Andalgala"},{c:25,n:"Concejo Deliberante Huillapima"},
+  {c:38,n:"Concejo Deliberante Santa Maria"},{c:12,n:"Concejo Deliberante Saujil"},
+  {c:10,n:"Concejo Deliberante SFVC"},{c:5,n:"Concejo Deliberante Valle Viejo"},
+  {c:81,n:"Corral Quemado"},{c:48,n:"Defensoria del Pueblo"},{c:40,n:"Diputados"},
+  {c:88,n:"Docentes Valle Viejo"},{c:44,n:"Educacion"},{c:33,n:"El Alto"},
+  {c:61,n:"El Rodeo"},{c:24,n:"Fiambala"},{c:6,n:"FONAVI"},{c:65,n:"Fran Mamerto Esquiu"},
+  {c:31,n:"Guardias Medicas"},{c:78,n:"Hualfin"},{c:14,n:"Huillapima"},
+  {c:35,n:"Icano"},{c:11,n:"La Puerta"},{c:60,n:"Las Juntas"},{c:28,n:"Londres"},
+  {c:75,n:"Londres LH"},{c:46,n:"Los Altos"},{c:56,n:"Los Varela"},{c:64,n:"Mutquin"},
+  {c:23,n:"Paclin"},{c:84,n:"PCQ"},{c:74,n:"PCQ LH"},{c:67,n:"Poder Judicial"},
+  {c:42,n:"Poman"},{c:49,n:"Poman LH"},{c:63,n:"Pozo de Piedra"},{c:76,n:"Puerta San Jose"},
+  {c:29,n:"Recreo"},{c:66,n:"Retiro Voluntario Educa"},{c:90,n:"Retiro Voluntario LH"},
+  {c:99,n:"Retiro Voluntario Mun"},{c:96,n:"Retiro Voluntario Tribunal de Cuenta"},
+  {c:77,n:"San Fernando"},{c:87,n:"San Jose"},{c:13,n:"Santa Maria"},{c:30,n:"Santa Rosa"},
+  {c:2,n:"Saujil"},{c:39,n:"Senadores"},{c:89,n:"TAPSO"},{c:27,n:"Tinogasta"},
+  {c:3,n:"Tribunal de cuentas"},{c:1,n:"Valle Viejo"},{c:41,n:"Villa Vil"}
+];
+
+const COLS=['cuil','codobra','canthijo','conyuge','adherente','rebpromo','zonageo','actividad','porcreduc',
+  'remutotal','remuimpo','porceadi','aportvolun','exessocial','asigfliar','exeosocial','remuimpoos',
+  'impoadicos','aportejubi','aportepatr','apafilos','appatros','apeynom','domicilio','fechaing','fechabaja',
+  'conceptono','codigo','declara','periodo','codorigen','nroagente','ubicacion','coseguro','codestado','saf',
+  'd_svco','d_ss','d_svca','d_sc','remusueldo','remusac','hsextras','dias_traba','canasta_fl','tipoliq',
+  'funcionari','remu_doc','act_doc','ap_dcto788','aporte_dif','cant_hsext','fecha_nac','ad_caja_co',
+  'aporte_caj','contrib_ca','tiene_deud','deuda_caja','trasp_osep','tiene_fdo_','sexo','premios','vacaciones',
+  'remuimpoto','por_retiro','rem_retiro','apo_vol','tras_vol','cos_pro','cos_alt','cos_int','claseycar'];
+
+const ERRORES_DEF={
+  1:['CRÍTICO','apeynom vacío'],2:['CRÍTICO','fecha_nac vacía'],3:['ADVERTENCIA','actividad no permitida'],
+  4:['CRÍTICO','nroagente vacío'],5:['CRÍTICO','CUIL inválido'],6:['ADVERTENCIA','saf vacío'],
+  7:['ADVERTENCIA','ubicacion vacía'],8:['ADVERTENCIA','codobra inválido'],
+  9:['CRÍTICO','remutotal formato inválido'],10:['CRÍTICO','remuimpo formato inválido'],
+  11:['ADVERTENCIA','remuimpoos formato inválido'],13:['CRÍTICO','periodo inválido o no coincide'],
+  17:['CRÍTICO','CUIL duplicado'],18:['ADVERTENCIA','aportejubi < mínimo ANSES'],
+  19:['ADVERTENCIA','aporte_caj < mínimo caja'],22:['ADVERTENCIA','zonageo inválida (08 o 09)'],
+  23:['ADVERTENCIA','act_doc inválido para docentes'],24:['ADVERTENCIA','aporte_caj no coincide'],
+  25:['ADVERTENCIA','contrib_ca no coincide'],26:['ADVERTENCIA','deuda_caja no coincide'],
+  30:['ADVERTENCIA','remuimpoos debe ser igual a remutotal'],31:['ADVERTENCIA','nroagente duplicado'],
+  32:['ADVERTENCIA','domicilio vacío'],35:['ADVERTENCIA','codorigen debe ser 0'],
+  36:['ADVERTENCIA','remusac 0 en junio/diciembre'],38:['CRÍTICO','dias_traba fuera de rango 1-30'],
+  39:['ADVERTENCIA','ad_caja_co debe ser F o T'],40:['ADVERTENCIA','tiene_deud debe ser F o T'],
+  41:['ADVERTENCIA','trasp_osep no coincide (0.5% remuimpoos)'],42:['CRÍTICO','sexo debe ser F/M/X'],
+  43:['ADVERTENCIA','premios formato inválido'],44:['ADVERTENCIA','vacaciones formato inválido'],
+  45:['ADVERTENCIA','remutotal no coincide con el cálculo'],46:['ADVERTENCIA','remuimpo no coincide'],
+  47:['ADVERTENCIA','remuimpo > remutotal'],48:['ADVERTENCIA','código de organismo no coincide con el organismo logueado'],
+  49:['ADVERTENCIA','tipoliq debe ser 1'],50:['ADVERTENCIA','apafilos != remutotal*4.5%'],
+  51:['ADVERTENCIA','appatros != remutotal*9%'],52:['ADVERTENCIA','aportepatr != remuimpo*10.753%'],
+  75:['ADVERTENCIA','aportepatr < mínimo ANSES (contribución patronal)'],
+  76:['ADVERTENCIA','aporte_caj < mínimo Caja Complementaria'],
+  77:['ADVERTENCIA','aporte_caj > máximo Caja (3% sueldo gobernador)'],
+  78:['ADVERTENCIA','contrib_ca > máximo Caja (3% sueldo gobernador)'],
+  53:['ADVERTENCIA','aportejubi no coincide'],54:['ADVERTENCIA','d_svco debe ser 5000.00'],
+  55:['ADVERTENCIA','d_ss debe ser 4400.00'],60:['ADVERTENCIA','fechaing vacía'],
+  61:['ADVERTENCIA','fechaing formato inválido'],62:['ADVERTENCIA','fecha_nac formato inválido'],
+  63:['ADVERTENCIA','agente menor de 18 años al ingreso'],64:['ADVERTENCIA','fechaing anterior a fecha_nac'],
+  65:['ADVERTENCIA','apafilos < mínimo OSEP'],66:['ADVERTENCIA','appatros < mínimo OSEP'],
+  67:['ADVERTENCIA','trasp_osep < mínimo OSEP'],68:['ADVERTENCIA','apo_vol no coincide'],
+  69:['ADVERTENCIA','tras_vol vacío con apo_vol>0'],70:['ADVERTENCIA','tras_vol no coincide'],
+  71:['ADVERTENCIA','aportejubi > tope máximo ANSES'],72:['ADVERTENCIA','d_svco vacío o cero'],
+  73:['ADVERTENCIA','d_ss vacío o cero'],74:['ADVERTENCIA','trasp_osep vacío o cero']
+};
+
+/*************** BASES Y MONTOS MINIMOS  ***************/
+
+const TOL=0.02;
+// ── PARÁMETROS EDITABLES DESDE ADMIN ──────────────────────────────────
+const TOPES = {
+  ANSES_APORTE_MIN:     14566.30,
+  ANSES_APORTE_MAX:     473398.09,
+  ANSES_BASE_MAX:       4303619.01,
+  ANSES_CONTRIB_MIN:    14239.22,
+  PCT_CONTRIB_PATRONAL: 0.10753,
+  PCT_APORTE_TRAB:      0.11,
+  OSEP_APORTE_MIN:      34828.32,
+  OSEP_CONTRIB_MIN:     69656.64,
+  OSEP_TRASP_MIN:       3869.81,
+  OSEP_BASE_MIN:        773962.74,
+  CAJA_APORTE_MIN:      10890,
+  CAJA_SUELDO_GOB:      7835220, // sueldo del gobernador — tope máx = 3%
+  D_SVCO_VAL:           5000,
+  D_SS_VAL:             4400,
+};
+// Alícuotas de caja — no cambian mensualmente
+const CAJA_APORTE_PCT=0.03,CAJA_CONTRIB_PCT=0.03,CAJA_DEUDA_PCT=0.06;
+// Alias para compatibilidad con el código existente
+let ANSES_APORTE_MIN,ANSES_APORTE_MAX,ANSES_BASE_MAX,ANSES_CONTRIB_MIN,
+    PCT_CONTRIB_PATRONAL,OSEP_APORTE_MIN,OSEP_CONTRIB_MIN,OSEP_TRASP_MIN,
+    OSEP_BASE_MIN,CAJA_APORTE_MIN,CAJA_SUELDO_GOB,D_SVCO_VAL,D_SS_VAL;
+function sincronizarTopes(){
+  ANSES_APORTE_MIN     = TOPES.ANSES_APORTE_MIN;
+  ANSES_APORTE_MAX     = TOPES.ANSES_APORTE_MAX;
+  ANSES_BASE_MAX       = TOPES.ANSES_BASE_MAX;
+  ANSES_CONTRIB_MIN    = TOPES.ANSES_CONTRIB_MIN;
+  PCT_CONTRIB_PATRONAL = TOPES.PCT_CONTRIB_PATRONAL;
+  OSEP_APORTE_MIN      = TOPES.OSEP_APORTE_MIN;
+  OSEP_CONTRIB_MIN     = TOPES.OSEP_CONTRIB_MIN;
+  OSEP_TRASP_MIN       = TOPES.OSEP_TRASP_MIN;
+  OSEP_BASE_MIN        = TOPES.OSEP_BASE_MIN;
+  CAJA_APORTE_MIN      = TOPES.CAJA_APORTE_MIN;
+  CAJA_SUELDO_GOB      = TOPES.CAJA_SUELDO_GOB;
+  D_SVCO_VAL           = TOPES.D_SVCO_VAL;
+  D_SS_VAL             = TOPES.D_SS_VAL;
+}
+sincronizarTopes();
+const ACT_PERM=["1106","2106","1206","2206","1306","2306","1406","2406","9999","1506","2506","0106","0206","0306","0406","01"];
+const ACT_DOC=["75","76","77","78","79","00","01"];
+const CODOBRA_OK=["009960","001102"];
+
+let claves={},envios=[],currentOrg=null;
+let orgsActivos=[];
+let agentes=[];
+let csvErrores=[];
+let totales={};
+let csvFile=null;
+let agenteIdx=null;
+let dpTabActual='personales';
+let currentStep=1;
+
+const pad=n=>String(n).padStart(3,'0');
+const fmt=n=>new Intl.NumberFormat('es-AR',{minimumFractionDigits:2,maximumFractionDigits:2}).format(+n||0);
+const fv=(r,c)=>((r&&r[c])||'').toString().trim();
+const fn=(r,c)=>{const v=((r&&r[c])||'').toString().trim();if(v==='')return 0;return parseFloat(v)||0;};
+const r2=n=>Math.round((+n||0)*100)/100;
+const igual=(a,b)=>Math.abs(r2(a)-r2(b))<=TOL;
+const esNum=s=>{const v=(s||'').trim();if(v===''||v==='0')return true;return/^0*[0-9]{1,12}(\.[0-9]{1,2})?$/.test(v);};
+const fechaOk=s=>{s=String(s||'').trim();if(s.length!==8||!/^\d+$/.test(s))return false;const m=+s.slice(4,6);return m>=1&&m<=12;};
+const estadoPill=s=>s==='ok'?'<span class="pill p-ok">OK</span>':s==='critico'?'<span class="pill p-err">Crítico</span>':'<span class="pill p-warn">Advertencia</span>';
+
+function valCuil(c){
+  c=String(c||'').trim();
+  if(!/^\d{11}$/.test(c))return false;
+  const m=[5,4,3,2,7,6,5,4,3,2];
+  const s=m.reduce((a,v,i)=>a+parseInt(c[i])*v,0);
+  let d=11-(s%11);if(d===11)d=0;if(d===10)d=9;
+  return d===parseInt(c[10]);
+}
+function normPer(p){
+  p=String(p||'').trim();
+  if(p.length===6&&/^\d{6}$/.test(p)){
+    const anio=parseInt(p.slice(0,4));const mes=parseInt(p.slice(4,6));
+    if(anio>=2000&&anio<=2099&&mes>=1&&mes<=12) return p;
+  }
+  return p;
+}
+function mostrarToast(msg='✓ Cambios guardados'){
+  const t=document.getElementById('save-toast');
+  t.textContent=msg;t.classList.add('show');
+  setTimeout(()=>t.classList.remove('show'),2000);
+}
+
+function init(){
+  ORGS.forEach(o=>{claves[o.n]=pad(o.c);});
+  claves['ADMIN']='admin2024';
+  orgsActivos=[...ORGS];
+  actualizarSelectOrg();
+  try{if(typeof emailjs!=='undefined') emailjs.init(EMAILJS_PUBLIC_KEY);}catch(e){}
+}
+
+// ── LOGIN / LOGOUT ─────────────────────────────────────────────────────
+async function doLogin(){
+  const orgEl=document.getElementById('sel-org');
+  const passEl=document.getElementById('inp-pass');
+  const errEl=document.getElementById('login-err');
+  const errMsg=document.getElementById('login-err-msg');
+  const org=orgEl?orgEl.value:'';
+  const pass=passEl?passEl.value:'';
+
+  function mostrarError(msg){if(errEl)errEl.classList.remove('hidden');if(errMsg)errMsg.textContent=msg;}
+  if(!org){mostrarError('Seleccioná un organismo');return;}
+  if(Object.keys(claves).length===0) init();
+  const claveCorrecta=claves[org];
+  if(!claveCorrecta){mostrarError('Organismo no reconocido');return;}
+  if(pass!==claveCorrecta){mostrarError('Clave incorrecta');return;}
+
+  if(errEl) errEl.classList.add('hidden');
+  currentOrg=org;
+
+  // Deshabilitar botón mientras carga
+  const btnLogin = document.getElementById('btn-login');
+  if(btnLogin){btnLogin.disabled=true;btnLogin.innerHTML='<span class="spinner"></span>Cargando...';}
+
+  document.getElementById('screen-login').classList.add('hidden');
+  document.getElementById('btn-logout').classList.remove('hidden');
+  document.getElementById('sync-indicator').classList.remove('hidden');
+  const hb=document.getElementById('hbadge');
+  hb.classList.remove('hidden');
+
+  if(org==='ADMIN'){
+    hb.textContent='Administrador';hb.className='badge badge-admin';
+    document.getElementById('sync-indicator').classList.add('hidden');
+    document.getElementById('screen-admin').classList.remove('hidden');
+    refreshAdmin();
+  } else {
+    const od=ORGS.find(o=>o.n===org);
+    hb.textContent=`Org. ${od?od.c:''}`;hb.className='badge badge-org';
+    document.getElementById('d-organismo').value=org;
+    document.getElementById('screen-org').classList.remove('hidden');
+    // Verificar borrador en Sheets
+    setSyncIndicator('ing','⟳ Verificando...');
+    await verificarBorrador();
+    setSyncIndicator('ok','✓ Listo');
+  }
+
+  if(btnLogin){btnLogin.disabled=false;btnLogin.innerHTML='Ingresar';}
+}
+
+function doLogout(){
+  currentOrg=null;agentes=[];csvErrores=[];totales={};csvFile=null;agenteIdx=null;borradorAgentes=[];borradorPeriodo='';
+  clearTimeout(syncTimeout);
+  cerrarPanel();
+  document.getElementById('screen-login').classList.remove('hidden');
+  document.getElementById('screen-org').classList.add('hidden');
+  document.getElementById('screen-admin').classList.add('hidden');
+  document.getElementById('btn-logout').classList.add('hidden');
+  document.getElementById('hbadge').classList.add('hidden');
+  document.getElementById('sync-indicator').classList.add('hidden');
+  document.getElementById('borrador-banner').classList.add('hidden');
+  document.getElementById('sel-org').value='';
+  document.getElementById('inp-pass').value='';
+  setStep(1);
+}
+
+// ── PASOS ──────────────────────────────────────────────────────────────
+const PASO_IDS={1:'paso-1',2:'paso-2',3:'paso-3',4:'paso-4',5:'paso-5'};
+
+function setStep(n){
+  currentStep=n;
+  [1,2,3,4,5].forEach(i=>{
+    const s=document.getElementById('step-'+i);
+    if(s) s.className='step'+(i===n?' active':i<n?' done':'');
+  });
+  Object.entries(PASO_IDS).forEach(([num,id])=>{
+    const el=document.getElementById(id);
+    if(el) el.classList.toggle('hidden',parseInt(num)!==n);
+  });
+}
+
+function irPaso1(){setStep(1);}
+function irPaso2(){
+  const campos=[
+    ['d-direccion','Dirección'],['d-cargo-auto','Cargo Autoridad'],['d-nombre-auto','Nombre Autoridad'],
+    ['d-cargo-rh','Cargo R.H.'],['d-nombre-rh','Nombre R.H.'],['d-periodo','Período']
+  ];
+  for(const[id,nombre] of campos){
+    if(!document.getElementById(id).value.trim()){
+      document.getElementById('paso1-err').classList.remove('hidden');
+      document.getElementById('paso1-err-msg').textContent=`El campo "${nombre}" es obligatorio`;
+      return;
+    }
+  }
+  const per=document.getElementById('d-periodo').value.trim();
+  if(per.length!==6){
+    document.getElementById('paso1-err').classList.remove('hidden');
+    document.getElementById('paso1-err-msg').textContent='El período debe tener formato AAAAMM (ej: 202504)';
+    return;
+  }
+  document.getElementById('paso1-err').classList.add('hidden');
+
+  // ── Detección de período distinto al del borrador ──────────────────
+  // Solo aplica si hay borrador guardado, con período detectado, y distinto al ingresado
+  if(borradorAgentes.length > 0 && borradorPeriodo && borradorPeriodo !== per && agentes.length === 0){
+    mostrarModalReutilizar(
+      per,
+      // Sí → copiar agentes actualizando el período
+      function(){
+        agentes = borradorAgentes.map(a => ({ ...a, periodo: per }));
+        borradorAgentes = agentes; // sincronizar para que "Continuar borrador" también use el nuevo período
+        borradorPeriodo = per;
+        document.getElementById('borrador-banner').classList.add('hidden');
+        guardarEnSheets();
+        mostrarToast(`✓ ${agentes.length} agentes copiados al período ${per}`);
+        setStep(2); mostrarTablaAgentes();
+      },
+      // No → descartar borrador y continuar sin agentes
+      async function(){
+        borradorAgentes = [];
+        borradorPeriodo = '';
+        document.getElementById('borrador-banner').classList.add('hidden');
+        await limpiarEnSheets();
+        mostrarToast('🗑 Borrador descartado');
+        setStep(2);
+      },
+      // Ignorar → continuar sin tocar nada (el banner de borrador sigue visible)
+      function(){
+        setStep(2);
+      }
+    );
+    return;
+  }
+
+  setStep(2);
+}
+
+function confirmarAccion(titulo,mensaje,callbackSi,labelSi='Confirmar'){
+  const ov=document.getElementById('confirm-overlay');
+  const yesBtn=document.getElementById('confirm-yes');
+  const noBtn=document.getElementById('confirm-no');
+  document.getElementById('confirm-title').textContent=titulo;
+  document.getElementById('confirm-msg').textContent=mensaje;
+  yesBtn.textContent=labelSi;
+  ov.classList.remove('hidden');
+  const newYes=yesBtn.cloneNode(true);const newNo=noBtn.cloneNode(true);
+  yesBtn.parentNode.replaceChild(newYes,yesBtn);noBtn.parentNode.replaceChild(newNo,noBtn);
+  newYes.addEventListener('click',function(){ov.classList.add('hidden');callbackSi();});
+  newNo.addEventListener('click',function(){ov.classList.add('hidden');});
+}
+
+function limpiarAgentes(){
+  agentes=[];csvErrores=[];totales={};csvFile=null;
+  const viejo=document.getElementById('fi-csv');
+  if(viejo){
+    const nuevo=document.createElement('input');
+    nuevo.type='file';nuevo.id='fi-csv';nuevo.accept='.csv,.txt';nuevo.className='hidden';
+    nuevo.addEventListener('change',function(){if(this.files[0])loadCSV(this.files[0]);});
+    viejo.parentNode.replaceChild(nuevo,viejo);
+  }
+  document.getElementById('csv-info').classList.add('hidden');
+  document.getElementById('dz-csv').style.display='';
+  document.getElementById('agentes-card').classList.add('hidden');
+  const tb=document.getElementById('agentes-tbody');if(tb)tb.innerHTML='';
+  guardarEnSheets(); // sincronizar el vaciado
+  mostrarToast('Archivo quitado — podés cargar uno nuevo');
+}
+
+function irPaso2show(){
+  setStep(2);
+  if(agentes.length>0) mostrarTablaAgentes();
+  else {const dz=document.getElementById('dz-csv');if(dz)dz.style.display='';}
+}
+function irPaso3(){
+  if(agentes.length===0){alert('No hay agentes cargados. Importá un CSV o agregá agentes manualmente.');return;}
+  procesarValidaciones();setStep(3);
+}
+function irPaso3show(){setStep(3);}
+function irPaso4(){generarDDJJ();setStep(4);}
+function irPaso5(){setStep(5);renderConfirmacion();}
+
+// ── IMPORTAR CSV ───────────────────────────────────────────────────────
+function dropFile(ev){
+  ev.preventDefault();document.getElementById('dz-csv').classList.remove('drag');
+  const f=ev.dataTransfer.files[0];if(f)loadCSV(f);
+}
+function loadCSV(f){if(!f)return;csvFile=f;const r=new FileReader();r.onload=e=>importarCSV(e.target.result,f.name);r.readAsText(f,'utf-8');}
+
+function parsearLineaCSV(linea){
+  linea=linea.replace(/\r/g,'');const campos=[];let i=0,campo='',enComillas=false;
+  while(i<linea.length){
+    const c=linea[i];
+    if(c==='"'){if(enComillas&&linea[i+1]==='"'){campo+='"';i+=2;continue;}enComillas=!enComillas;}
+    else if(c===','&&!enComillas){campos.push(campo.trim());campo='';}
+    else{campo+=c;}
+    i++;
+  }
+  campos.push(campo.trim());return campos;
+}
+function normalizarFecha(f){
+  if(!f||f.trim()===''||f.trim()==='/'||f.trim()==='/  /') return '';
+  f=f.trim();if(/^\d{8}$/.test(f))return f;
+  const m=f.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})$/);
+  if(m)return`${m[3]}${m[2].padStart(2,'0')}${m[1].padStart(2,'0')}`;return f;
+}
+function normalizarPeriodo(p){
+  p=String(p||'').trim().replace(/"/g,'');if(p.length!==6||!/^\d{6}$/.test(p))return p;
+  const primeros4=parseInt(p.slice(0,4));const ultimos4=parseInt(p.slice(2,6));
+  if(primeros4>=2000&&primeros4<=2099)return p;
+  if(ultimos4>=2000&&ultimos4<=2099)return p.slice(2)+p.slice(0,2);return p;
+}
+
+function importarCSV(text,nombre){
+  const lines=text.split('\n').filter(l=>l.trim().replace(/\r/g,''));
+  const orgData=orgsActivos.find(o=>o.n===currentOrg);
+  if(orgData&&lines.length>0){
+    const primeraLinea=parsearLineaCSV(lines[0]);
+    if(primeraLinea.length>=72){
+      const codCSV=parseInt(primeraLinea[27])||0;
+      if(codCSV!==0&&codCSV!==orgData.c){
+        const orgReal=orgsActivos.find(o=>o.c===codCSV);
+        const nombreReal=orgReal?`"${orgReal.n}" (código ${codCSV})`:`código ${codCSV}`;
+        document.getElementById('csv-info').innerHTML=
+          `<div class="alert a-err" style="margin-top:4px"><span class="ai">✕</span>
+          <div><strong>Archivo incorrecto.</strong><br>Este CSV pertenece al organismo ${nombreReal}.<br>
+          Estás logueado como <strong>${currentOrg}</strong>.</div></div>`;
+        document.getElementById('csv-info').classList.remove('hidden');csvFile=null;
+        const fi=document.getElementById('fi-csv');
+        if(fi){const n=fi.cloneNode(true);n.addEventListener('change',function(){if(this.files[0])loadCSV(this.files[0]);});fi.parentNode.replaceChild(n,fi);}
+        return;
+      }
+    }
+  }
+  // Período declarado en el formulario (Paso 1)
+  const periodoFormulario = (document.getElementById('d-periodo').value||'').trim();
+
+  // Si ya hay agentes, agregar en lugar de reemplazar
+  const nuevos=lines.map((l)=>{
+    const vals=parsearLineaCSV(l);const row={};
+    COLS.forEach((c,ci)=>{
+      let v=(vals[ci]||'').trim();
+      if(c==='periodo')v=normalizarPeriodo(v);
+      if(c==='fechaing'||c==='fechabaja'||c==='fecha_nac')v=normalizarFecha(v);
+      row[c]=v;
+    });
+    // Si el período del CSV difiere del declarado, se pisa automáticamente
+    if(periodoFormulario && row.periodo !== periodoFormulario) row.periodo = periodoFormulario;
+    if((!row.codigo||parseInt(row.codigo)===0)&&orgData) row.codigo=String(orgData.c);
+    return row;
+  });
+
+  // Detectar período original del CSV para mostrar aviso informativo
+  const _periodoCSV=(()=>{const idx=COLS.indexOf('periodo');if(idx<0)return'';for(const l of lines){const v=normalizarPeriodo((parsearLineaCSV(l)[idx]||'').trim());if(v&&v!==periodoFormulario)return v;}return'';})();
+  const avisoperiodo = _periodoCSV && periodoFormulario
+    ? `<div class="alert a-info" style="margin-top:6px;font-size:11px"><span class="ai">\u2139</span>El CSV ten\u00eda per\u00edodo <strong>${_periodoCSV}</strong> \u2014 se actualiz\u00f3 autom\u00e1ticamente a <strong>${periodoFormulario}</strong>.</div>`
+    : '';
+
+  const totalAntes = agentes.length;
+  agentes = [...agentes, ...nuevos]; // ACUMULAR en lugar de reemplazar
+
+  document.getElementById('csv-info').innerHTML=
+    `<div class="file-row" style="justify-content:space-between">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div class="file-tag">CSV</div>
+        <div><div class="fn">${nombre}</div>
+        <div class="fs">${nuevos.length} nuevos · ${agentes.length} total acumulado${totalAntes>0?' ('+totalAntes+' previos)':''}</div></div>
+      </div>
+      <button id="btn-quitar-csv" class="btn-sm btn-danger" style="flex-shrink:0;padding:3px 8px">✕ Quitar</button>
+    </div>${avisoperiodo}`;
+  document.getElementById('csv-info').classList.remove('hidden');
+  document.getElementById('dz-csv').style.display='none';
+  document.getElementById('btn-quitar-csv').addEventListener('click',function(){
+    confirmarAccion('¿Quitar el archivo?','Se eliminarán todos los agentes cargados.',limpiarAgentes,'Quitar archivo');
+  });
+  recalcularSilencioso(); // recalcular con parámetros actuales
+  mostrarTablaAgentes();
+  guardarEnSheets(); // guardar automáticamente al importar
+}
+
+function mostrarTablaAgentes(){
+  document.getElementById('agentes-card').classList.remove('hidden');renderTabla();
+}
+
+// ── RECALCULAR TODOS LOS AGENTES ──────────────────────────────────────
+function recalcularSilencioso(){
+  if(!agentes.length) return;
+  _doRecalcular();
+}
+
+function recalcularTodos(){
+  if(!agentes.length) return;
+  confirmarAccion(
+    'Recalcular aportes',
+    `Se recalcularán los aportes y contribuciones de ${agentes.length} agente(s) usando los parámetros actuales. Las remuneraciones no se modifican.`,
+    function(){
+      _doRecalcular();
+      renderTabla();
+      guardarEnSheets();
+      mostrarToast(`✓ ${agentes.length} agente(s) recalculados`);
+    },
+    'Recalcular'
+  );
+}
+
+function _doRecalcular(){
+  agentes.forEach(a => {
+    const remusueldo = fn(a,'remusueldo'), remusac = fn(a,'remusac'), hsextras = fn(a,'hsextras');
+    const premios = fn(a,'premios'), vacaciones = fn(a,'vacaciones');
+    const canasta = fn(a,'canasta_fl'), conceptono = fn(a,'conceptono');
+    const remuimpo   = r2(remusueldo + remusac + hsextras);
+    const remutotal  = r2(remuimpo + conceptono + premios + vacaciones + canasta);
+    const remuimpoos = remutotal;
+    const isDoc = fv(a,'act_doc') === '01';
+    const cantAdh = parseInt(fv(a,'adherente')) || 0;
+    const adCaja  = fv(a,'ad_caja_co');
+    const tieneDeud = fv(a,'tiene_deud');
+    const codobra = fv(a,'codobra');
+    const aportejubi = isDoc
+      ? r2(remuimpo * 0.18)
+      : Math.min(r2(remuimpo * TOPES.PCT_APORTE_TRAB), ANSES_APORTE_MAX);
+    const aportepatr = r2(remuimpo * TOPES.PCT_CONTRIB_PATRONAL);
+    const esOSEP   = codobra === '009960';
+    const esOSPLAD = codobra === '001102';
+    let pctAporte = 0.045, pctContrib = 0.09;
+    let minAporte = OSEP_APORTE_MIN, minContrib = OSEP_CONTRIB_MIN;
+    if(esOSPLAD){ if(isDoc){ pctAporte=0.03; pctContrib=0.06; } minAporte=0; minContrib=0; }
+    const apafilos = minAporte > 0 ? Math.max(r2(remutotal*pctAporte),minAporte) : r2(remutotal*pctAporte);
+    const appatros = minContrib > 0 ? Math.max(r2(remutotal*pctContrib),minContrib) : r2(remutotal*pctContrib);
+    let trasp_osep=0, apo_vol=0, tras_vol=0;
+    if(esOSEP){
+      trasp_osep = Math.max(r2(remuimpoos*0.005), OSEP_TRASP_MIN);
+      const pct  = cantAdh>=2?0.05:cantAdh>=1?0.025:0;
+      apo_vol    = cantAdh>0?Math.max(r2(remuimpoos*pct),r2(OSEP_BASE_MIN*pct)):0;
+      tras_vol   = cantAdh>0?trasp_osep:0;
+    }
+    const aporte_caj = adCaja==='T'?r2(remutotal*CAJA_APORTE_PCT):0;
+    const contrib_ca = adCaja==='T'?r2(remutotal*CAJA_CONTRIB_PCT):0;
+    const deuda_caja = tieneDeud==='T'?r2(remutotal*CAJA_DEUDA_PCT):fn(a,'deuda_caja');
+    Object.assign(a,{
+      remuimpo:String(remuimpo),remutotal:String(remutotal),remuimpoos:String(remuimpoos),
+      remuimpoto:String(remuimpo),aportejubi:String(aportejubi),aportepatr:String(aportepatr),
+      apafilos:String(apafilos),appatros:String(appatros),trasp_osep:String(trasp_osep),
+      apo_vol:String(apo_vol),tras_vol:String(tras_vol),aporte_caj:String(aporte_caj),
+      contrib_ca:String(contrib_ca),deuda_caja:String(deuda_caja),
+    });
+  });
+}
+
+// ── TABLA DE AGENTES ───────────────────────────────────────────────────
+function renderTabla(){
+  const q=(document.getElementById('search-agente').value||'').toLowerCase();
+  const fos=document.getElementById('filtro-os').value;
+  const lista=agentes.filter(a=>{
+    const matchQ=!q||(fv(a,'cuil').includes(q)||fv(a,'apeynom').toLowerCase().includes(q)||fv(a,'nroagente').includes(q));
+    const matchOS=!fos||fv(a,'codobra')===fos;
+    return matchQ&&matchOS;
+  });
+  document.getElementById('agentes-count').textContent=`${agentes.length} agente(s) cargado(s)`;
+  const osStyle=a=>fv(a,'codobra')==='001102'?'background:var(--blue-light);color:var(--blue)':'';
+  document.getElementById('agentes-tbody').innerHTML=lista.length
+    ? lista.map(a=>{
+        const idx=agentes.indexOf(a);
+        return`<tr class="agent-row" onclick="abrirAgente(${idx})" title="Clic para ver y editar">
+          <td style="color:var(--text2);font-size:11px">${idx+1}</td>
+          <td style="font-family:var(--mono);font-size:11px">${fv(a,'cuil')||'<span style="color:var(--red)">Sin CUIL</span>'}</td>
+          <td style="font-weight:600">${fv(a,'apeynom')||'<span style="color:var(--text3);font-weight:400">Sin nombre</span>'}</td>
+          <td>${fv(a,'nroagente')}</td>
+          <td style="font-size:11px">${fv(a,'actividad')}</td>
+          <td style="font-family:var(--mono);font-size:11px">${fmt(fn(a,'remutotal'))}</td>
+          <td><span class="pill p-ok" style="${osStyle(a)}">${fv(a,'codobra')||'—'}</span></td>
+          <td style="text-align:center">${fv(a,'dias_traba')}</td>
+          <td style="text-align:center">${fv(a,'sexo')}</td>
+          <td><button class="btn-sm btn-danger btn-del-agente" data-idx="${idx}" title="Eliminar">✕</button></td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="10" style="text-align:center;color:var(--text2);padding:20px">Sin resultados</td></tr>';
+  document.querySelectorAll('.btn-del-agente').forEach(btn=>{
+    btn.addEventListener('click',function(e){
+      e.stopPropagation();eliminarAgenteIdx(parseInt(this.getAttribute('data-idx')));
+    });
+  });
+}
+
+// ── PANEL LATERAL ──────────────────────────────────────────────────────
+function abrirNuevoAgente(){
+  const nuevo={};COLS.forEach(c=>{nuevo[c]='';});
+  nuevo.codobra='009960';nuevo.zonageo='08';nuevo.tipoliq='1';nuevo.codorigen='0';
+  nuevo.ad_caja_co='F';nuevo.tiene_deud='F';nuevo.funcionari='F';nuevo.tiene_fdo_='F';
+  nuevo.sexo='M';nuevo.dias_traba='30';nuevo.d_svco='5000.00';nuevo.d_ss='4400.00';
+  nuevo.act_doc='00';nuevo.codestado='0';
+  nuevo.periodo=document.getElementById('d-periodo').value;
+  nuevo.codigo=String(ORGS.find(o=>o.n===currentOrg)?.c||'');
+  agentes.push(nuevo);mostrarTablaAgentes();abrirAgente(agentes.length-1);
+}
+
+function abrirAgente(idx){
+  if(idx<0||idx>=agentes.length)return;
+  agenteIdx=idx;dpTabActual='personales';
+  const a=agentes[idx];
+  document.getElementById('dp-nombre').textContent=fv(a,'apeynom')||'Nuevo agente';
+  document.getElementById('dp-cuil').textContent=`CUIL: ${fv(a,'cuil')||'—'}  ·  Legajo: ${fv(a,'nroagente')||'—'}`;
+  const tieneBaja=!!fv(a,'fechabaja');
+  document.getElementById('dp-badge').textContent=tieneBaja?'Baja':'Activo';
+  document.getElementById('dp-badge').className='pill '+(tieneBaja?'p-err':'p-ok');
+  document.querySelectorAll('.subtab').forEach((el,i)=>el.classList.toggle('active',i===0));
+  renderDpTab();
+  document.getElementById('detail-panel').classList.add('open');
+  document.getElementById('overlay').classList.add('show');
+}
+
+function cerrarPanel(){
+  document.getElementById('detail-panel').classList.remove('open');
+  document.getElementById('overlay').classList.remove('show');agenteIdx=null;
+}
+function dpTab(tab){
+  dpTabActual=tab;
+  const tabs=['personales','laborales','ss','os'];
+  document.querySelectorAll('.subtab').forEach((el,i)=>el.classList.toggle('active',tabs[i]===tab));
+  mostrarTabDom(tab);
+}
+function renderDpTab(){
+  if(agenteIdx===null)return;
+  const a=agentes[agenteIdx];
+  const b=document.getElementById('dp-body');
+  // Renderizar TODAS las pestañas en el DOM (ocultas) para poder leer todos los campos al guardar
+  b.innerHTML=
+    `<div id="tab-personales" style="${dpTabActual==='personales'?'':'display:none'}">${htmlPersonales(a)}</div>`+
+    `<div id="tab-laborales"  style="${dpTabActual==='laborales' ?'':'display:none'}">${htmlLaborales(a)}</div>`+
+    `<div id="tab-ss"         style="${dpTabActual==='ss'        ?'':'display:none'}">${htmlSS(a)}</div>`+
+    `<div id="tab-os"         style="${dpTabActual==='os'        ?'':'display:none'}">${htmlOS(a)}</div>`;
+  b.scrollTop=0;
+}
+
+function mostrarTabDom(tab){
+  ['personales','laborales','ss','os'].forEach(t=>{
+    const el=document.getElementById('tab-'+t);
+    if(el) el.style.display=(t===tab?'':'none');
+  });
+}
+
+function dpCampo(id,lbl,val,type='text',extra=''){
+  const v=(val||'').toString().replace(/"/g,'&quot;').trim();
+  return`<div><label>${lbl}</label><input type="${type}" id="${id}" value="${v}" ${extra} style="width:100%"></div>`;
+}
+function dpSelect(id,lbl,val,opts){
+  const v=(val||'').toString().trim();
+  const ops=opts.map(([ov,ol])=>`<option value="${ov}"${ov===v?' selected':''}>${ol}</option>`).join('');
+  return`<div><label>${lbl}</label><select id="${id}" style="width:100%">${ops}</select></div>`;
+}
+function dpRO(lbl,val){
+  return`<div><label>${lbl} <span class="calc-badge">auto</span></label><div class="ro-val">${fmt(val)}</div></div>`;
+}
+
+function htmlPersonales(a){
+  return`
+  <div class="field-group">
+    <div class="field-group-title">Identificación</div>
+    <div class="g2">${dpCampo('p-cuil','CUIL *',fv(a,'cuil'))}${dpCampo('p-nroagente','Nº Agente / Legajo *',fv(a,'nroagente'))}</div>
+    ${dpCampo('p-apeynom','Apellido y Nombre *',fv(a,'apeynom'))}
+    ${dpCampo('p-domicilio','Domicilio',fv(a,'domicilio'))}
+    <div class="g3">
+      ${dpCampo('p-fecha_nac','Fecha Nacimiento (AAAAMMDD)',fv(a,'fecha_nac'))}
+      ${dpSelect('p-sexo','Sexo',fv(a,'sexo'),[['M','M — Masculino'],['F','F — Femenino'],['X','X — No binario']])}
+      ${dpCampo('p-canthijo','Cantidad hijos',fv(a,'canthijo'),'number')}
+    </div>
+    <div class="g3">
+      ${dpSelect('p-conyuge','Cónyuge',fv(a,'conyuge'),[['0','No'],['1','Sí']])}
+      ${dpCampo('p-adherente','Adherentes OSEP',fv(a,'adherente'),'number')}
+      ${dpCampo('p-asigfliar','Asig. Familiar',fv(a,'asigfliar'),'number')}
+    </div>
+  </div>
+  <div class="field-group">
+    <div class="field-group-title">Fechas</div>
+    <div class="g2">
+      ${dpCampo('p-fechaing','Fecha Ingreso al Cargo (AAAAMMDD)',fv(a,'fechaing'))}
+      ${dpCampo('p-fechabaja','Fecha Baja del Cargo (AAAAMMDD)',fv(a,'fechabaja'))}
+    </div>
+  </div>`;
+}
+
+function htmlLaborales(a){
+  return`
+  <div class="field-group">
+    <div class="field-group-title">Datos laborales</div>
+    <div class="g3">
+      ${dpSelect('l-zonageo','Zona Geográfica',fv(a,'zonageo'),[['08','08'],['09','09']])}
+      ${dpCampo('l-actividad','Actividad',fv(a,'actividad'))}
+      ${dpCampo('l-porcreduc','Porc. Reducción',fv(a,'porcreduc'),'number')}
+    </div>
+    <div class="g2">${dpCampo('l-saf','SAF',fv(a,'saf'))}${dpCampo('l-ubicacion','Ubicación Presupuestaria',fv(a,'ubicacion'))}</div>
+    <div class="g3">
+      ${dpSelect('l-tipoliq','Tipo Liquidación',fv(a,'tipoliq'),[['1','1 — Autoliquidación'],['2','2 — Reemplaza LH']])}
+      ${dpSelect('l-funcionari','Funcionario',fv(a,'funcionari'),[['F','No'],['T','Sí']])}
+      ${dpCampo('l-dias_traba','Días trabajados (1–30) *',parseInt(fv(a,'dias_traba'))||'','number','min="1" max="30" step="1"')}
+    </div>
+    <div class="g3">
+      ${dpCampo('l-claseycar','Clase y Cargo',fv(a,'claseycar'))}
+      ${dpCampo('l-codestado','Código Estado',fv(a,'codestado'),'number')}
+      ${dpCampo('l-rebpromo','Rebaja Promovida',fv(a,'rebpromo'),'number')}
+    </div>
+  </div>
+  <div class="field-group">
+    <div class="field-group-title">Docente</div>
+    <div class="g3">
+      ${dpCampo('l-remu_doc','Remuneración Docente',fv(a,'remu_doc'),'number')}
+      ${dpSelect('l-act_doc','Código Actividad Docente',fv(a,'act_doc'),[['00','00 — No docente'],['01','01 — Magistrado'],['75','75'],['76','76'],['77','77'],['78','78'],['79','79']])}
+      ${dpCampo('l-cant_hsext','Cant. Horas Extras',fv(a,'cant_hsext'),'number')}
+    </div>
+  </div>`;
+}
+
+function recalcSS(){
+  const gn=id=>{const el=document.getElementById(id);return el?parseFloat(el.value)||0:0;};
+  const gv=id=>{const el=document.getElementById(id);return el?el.value:'';};
+  const remusueldo=gn('s-remusueldo'),remusac=gn('s-remusac'),hsextras=gn('s-hsextras');
+  const premios=gn('s-premios'),vacaciones=gn('s-vacaciones'),canasta=gn('s-canasta_fl'),conceptono=gn('s-conceptono');
+  const remuimpo=r2(remusueldo+remusac+hsextras);const remutotal=r2(remuimpo+conceptono+premios+vacaciones+canasta);
+  const a=agenteIdx!==null?agentes[agenteIdx]:null;const isDoc=a?fv(a,'act_doc')==='01':false;
+  const aportejubi=isDoc?r2(remuimpo*0.18):Math.min(r2(remuimpo*0.11),ANSES_APORTE_MAX);
+  const aportepatr=r2(remuimpo*PCT_CONTRIB_PATRONAL);const adCaja=gv('s-ad_caja_co');const tieneDeud=gv('s-tiene_deud');
+  const aporte_caj=adCaja==='T'?r2(remutotal*CAJA_APORTE_PCT):0;
+  const contrib_ca=adCaja==='T'?r2(remutotal*CAJA_CONTRIB_PCT):0;
+  const deudaCalc=tieneDeud==='T'?r2(remutotal*CAJA_DEUDA_PCT):0;
+  const set=(id,v)=>{const el=document.getElementById(id);if(el)el.textContent=fmt(v);};
+  set('calc-remuimpo',remuimpo);set('calc-remutotal',remutotal);set('calc-aportejubi',aportejubi);
+  set('calc-aportepatr',aportepatr);set('calc-aporte_caj',aporte_caj);set('calc-contrib_ca',contrib_ca);set('calc-deuda',deudaCalc);
+  const lbl=document.getElementById('calc-jub-lbl');if(lbl)lbl.textContent=`Aporte Jubilación (${isDoc?'18%':'11%'})`;
+}
+
+function htmlSS(a){
+  const isDoc=fv(a,'act_doc')==='01';
+  const remusueldo=fn(a,'remusueldo'),remusac=fn(a,'remusac'),hsextras=fn(a,'hsextras');
+  const premios=fn(a,'premios'),vacaciones=fn(a,'vacaciones'),canasta=fn(a,'canasta_fl'),conceptono=fn(a,'conceptono');
+  const remuimpo=r2(remusueldo+remusac+hsextras);const remutotal=r2(remuimpo+conceptono+premios+vacaciones+canasta);
+  const aportejubi=isDoc?r2(remuimpo*0.18):Math.min(r2(remuimpo*0.11),ANSES_APORTE_MAX);
+  const aportepatr=r2(remuimpo*PCT_CONTRIB_PATRONAL);const adCaja=fv(a,'ad_caja_co');const tieneDeud=fv(a,'tiene_deud');
+  const aporte_caj=adCaja==='T'?r2(remutotal*CAJA_APORTE_PCT):0;
+  const contrib_ca=adCaja==='T'?r2(remutotal*CAJA_CONTRIB_PCT):0;const deudaCalc=tieneDeud==='T'?r2(remutotal*CAJA_DEUDA_PCT):0;
+  const oninput='oninput="recalcSS()"';const onchange='onchange="recalcSS()"';
+  return`
+  <div class="field-group">
+    <div class="field-group-title">Remuneraciones base</div>
+    <div class="g3">
+      ${dpCampo('s-remusueldo','Rem. Sueldo *',fv(a,'remusueldo'),'number',oninput)}
+      ${dpCampo('s-remusac','Rem. SAC *',fv(a,'remusac'),'number',oninput)}
+      ${dpCampo('s-hsextras','Horas Extras $',fv(a,'hsextras'),'number',oninput)}
+    </div>
+    <div class="g3">
+      ${dpCampo('s-premios','Premios *',fv(a,'premios'),'number',oninput)}
+      ${dpCampo('s-vacaciones','Vacaciones *',fv(a,'vacaciones'),'number',oninput)}
+      ${dpCampo('s-canasta_fl','Canasta Familiar *',fv(a,'canasta_fl'),'number',oninput)}
+    </div>
+    ${dpCampo('s-conceptono','Conceptos No Remunerativos *',fv(a,'conceptono'),'number',oninput)}
+  </div>
+  <div class="field-group">
+    <div class="field-group-title">ARCA — Seguridad Social <span class="calc-badge">se actualiza al escribir</span></div>
+    <div class="g2">
+      <div><label>Rem. Imponible</label><div class="ro-val" id="calc-remuimpo">${fmt(remuimpo)}</div></div>
+      <div><label>Rem. Total</label><div class="ro-val" id="calc-remutotal">${fmt(remutotal)}</div></div>
+      <div><label id="calc-jub-lbl">Aporte Jubilación (${isDoc?'18%':'11%'})</label><div class="ro-val" id="calc-aportejubi">${fmt(aportejubi)}</div></div>
+      <div><label>Contribución Patr. (10.753%)</label><div class="ro-val" id="calc-aportepatr">${fmt(aportepatr)}</div></div>
+      ${isDoc?dpCampo('s-ap_dcto788','Aporte Dcto. 788',fv(a,'ap_dcto788'),'number'):''}
+      ${isDoc?dpCampo('s-aporte_dif','Aporte Diferencial Doc.',fv(a,'aporte_dif'),'number'):''}
+    </div>
+  </div>
+  <div class="field-group">
+    <div class="field-group-title">Caja Complementaria 82 Móvil <span class="calc-badge">se actualiza al escribir</span></div>
+    <div class="g2">
+      <select id="s-ad_caja_co" style="width:100%" ${onchange}>
+        <option value="F"${adCaja==='F'?' selected':''}>No adherido</option>
+        <option value="T"${adCaja==='T'?' selected':''}>Adherido</option>
+      </select>
+      <select id="s-tiene_deud" style="width:100%" ${onchange}>
+        <option value="F"${tieneDeud==='F'?' selected':''}>Sin deuda</option>
+        <option value="T"${tieneDeud==='T'?' selected':''}>Con deuda</option>
+      </select>
+    </div>
+    <div class="g3" style="margin-top:8px">
+      <div><label>Aporte (3%)</label><div class="ro-val" id="calc-aporte_caj">${fmt(aporte_caj)}</div></div>
+      <div><label>Contribución (3%)</label><div class="ro-val" id="calc-contrib_ca">${fmt(contrib_ca)}</div></div>
+      <div><label>Deuda (6%)</label><div class="ro-val" id="calc-deuda">${fmt(deudaCalc)}</div></div>
+    </div>
+    ${dpCampo('s-deuda_caja','Importe deuda (editable si difiere)',fv(a,'deuda_caja'),'number')}
+  </div>
+  <div class="field-group">
+    <div class="field-group-title">Seguros</div>
+    <div class="g4">
+      ${dpCampo('s-d_svco','Seg. Obligatorio',fv(a,'d_svco'),'number')}
+      ${dpCampo('s-d_ss','Seg. Sepelio',fv(a,'d_ss'),'number')}
+      ${dpCampo('s-d_svca','Seg. Adicional',fv(a,'d_svca'),'number')}
+      ${dpCampo('s-d_sc','Seg. Cónyuge',fv(a,'d_sc'),'number')}
+    </div>
+  </div>`;
+}
+
+function htmlOS(a){
+  const esOSEP=fv(a,'codobra')==='009960';const esOSPLAD=fv(a,'codobra')==='001102';
+  const isDoc=fv(a,'act_doc')!=='00'&&fv(a,'act_doc')!=='';
+  const remutotal=fn(a,'remutotal');const remuimpoos=fn(a,'remuimpoos')||remutotal;
+  const cantAdh=parseInt(fv(a,'adherente'))||0;
+  let pctAporte=0.045,pctContrib=0.09,minAporte=OSEP_APORTE_MIN,minContrib=OSEP_CONTRIB_MIN,etiquetaOS='OSEP';
+  if(esOSPLAD){etiquetaOS='OSPLAD';if(isDoc){pctAporte=0.03;pctContrib=0.06;}else{pctAporte=0.045;pctContrib=0.09;}minAporte=0;minContrib=0;}
+  const apafilos=minAporte>0?Math.max(r2(remutotal*pctAporte),minAporte):r2(remutotal*pctAporte);
+  const appatros=minContrib>0?Math.max(r2(remutotal*pctContrib),minContrib):r2(remutotal*pctContrib);
+  const pct=cantAdh>=2?0.05:cantAdh>=1?0.025:0;
+  const apo_vol=cantAdh>0?Math.max(r2(remuimpoos*pct),r2(OSEP_BASE_MIN*pct)):0;
+  const trasp_osep=Math.max(r2(remuimpoos*0.005),OSEP_TRASP_MIN);const tras_vol=cantAdh>0?trasp_osep:0;
+  return`
+  <div class="field-group">
+    <div class="field-group-title">Obra Social</div>
+    ${dpSelect('o-codobra','Obra Social *',fv(a,'codobra'),[['009960','009960 — OSEP (Provincial)'],['001102','001102 — OSPLAD (Nacional)']])}
+    ${esOSPLAD&&isDoc?`<div class="alert a-info" style="margin-top:8px"><span class="ai">ℹ</span>Docente OSPLAD: aporte 3%, contribución 6%</div>`:''}
+    <div class="g2" style="margin-top:10px">
+      ${dpRO(`Aporte O.S. (${(pctAporte*100).toFixed(0)}%)`,apafilos)}
+      ${dpRO(`Contribución Patr. O.S. (${(pctContrib*100).toFixed(0)}%)`,appatros)}
+    </div>
+  </div>
+  <div class="field-group" ${esOSEP?'':' style="display:none"'} id="os-vol-sec">
+    <div class="field-group-title">Afiliados voluntarios OSEP</div>
+    <p style="font-size:11px;color:var(--text2);margin-bottom:8px">Adherentes: <strong>${cantAdh}</strong> · Porcentaje: <strong>${pct*100}%</strong> <span class="calc-badge">editables si difieren</span></p>
+    <div class="g3">
+      ${dpCampo('o-apo_vol',`Aporte voluntario (${pct*100}%)`,fv(a,'apo_vol')||String(apo_vol),'number')}
+      ${dpCampo('o-tras_vol','Fondo trasplante voluntario (0.5%)',fv(a,'tras_vol')||String(tras_vol),'number')}
+      ${dpRO('Fondo trasplante OSEP (0.5%)',trasp_osep)}
+    </div>
+  </div>
+  <div class="field-group" ${esOSEP?'':' style="display:none"'} id="os-cos-sec">
+    <div class="field-group-title">Co-seguros OSEP (editable)</div>
+    <div class="g3">
+      ${dpCampo('o-cos_pro','Co-seguro Prótesis',fv(a,'cos_pro'),'number')}
+      ${dpCampo('o-cos_alt','Co-seguro Alto Costo',fv(a,'cos_alt'),'number')}
+      ${dpCampo('o-cos_int','Co-seguro Internación',fv(a,'cos_int'),'number')}
+    </div>
+  </div>`;
+}
+
+// ── GUARDAR AGENTE (panel lateral) ─────────────────────────────────────
+function guardarAgente(){
+  if(agenteIdx===null)return;
+  const a=agentes[agenteIdx];
+  const gv=id=>{const el=document.getElementById(id);return el?el.value.trim():'';};
+  const gn=id=>parseFloat(gv(id))||0;
+
+  // ── Personales (si los campos están en el DOM) ──
+  if(document.getElementById('p-cuil')){
+    a.cuil=gv('p-cuil');a.nroagente=gv('p-nroagente');a.apeynom=gv('p-apeynom');
+    a.domicilio=gv('p-domicilio');a.fecha_nac=gv('p-fecha_nac');a.sexo=gv('p-sexo');
+    a.canthijo=gv('p-canthijo');a.conyuge=gv('p-conyuge');a.adherente=gv('p-adherente');
+    a.asigfliar=gv('p-asigfliar');a.fechaing=gv('p-fechaing');a.fechabaja=gv('p-fechabaja');
+  }
+
+  // ── Laborales ──
+  if(document.getElementById('l-zonageo')){
+    a.zonageo=gv('l-zonageo');a.actividad=gv('l-actividad');a.porcreduc=gv('l-porcreduc');
+    a.saf=gv('l-saf');a.ubicacion=gv('l-ubicacion');a.codestado=gv('l-codestado');
+    a.tipoliq=gv('l-tipoliq');a.funcionari=gv('l-funcionari');
+    a.dias_traba=String(parseInt(gv('l-dias_traba'))||30);
+    a.claseycar=gv('l-claseycar');a.rebpromo=gv('l-rebpromo');
+    a.remu_doc=gv('l-remu_doc');a.act_doc=gv('l-act_doc');a.cant_hsext=gv('l-cant_hsext');
+  }
+
+  // ── Seguridad Social ──
+  if(document.getElementById('s-remusueldo')){
+    const remusueldo=gn('s-remusueldo'),remusac=gn('s-remusac'),hsextras=gn('s-hsextras');
+    const premios=gn('s-premios'),vacaciones=gn('s-vacaciones'),canasta=gn('s-canasta_fl'),conceptono=gn('s-conceptono');
+    const remuimpo=r2(remusueldo+remusac+hsextras);const remutotal=r2(remuimpo+conceptono+premios+vacaciones+canasta);
+    const isDoc=a.act_doc==='01';
+    const adCaja=gv('s-ad_caja_co');const tieneDeud=gv('s-tiene_deud');
+    const aporte_caj=adCaja==='T'?r2(remutotal*CAJA_APORTE_PCT):0;
+    const contrib_ca=adCaja==='T'?r2(remutotal*CAJA_CONTRIB_PCT):0;
+    // Conservar aportejubi y aportepatr del CSV — no recalcular para no pisar valores liquidados
+    const aportejubi=fn(a,'aportejubi')||0;
+    const aportepatr=fn(a,'aportepatr')||0;
+    Object.assign(a,{
+      remusueldo:String(remusueldo),remusac:String(remusac),hsextras:String(hsextras),
+      premios:String(premios),vacaciones:String(vacaciones),canasta_fl:String(canasta),
+      conceptono:String(conceptono),remuimpo:String(remuimpo),remutotal:String(remutotal),
+      remuimpoos:String(remutotal),remuimpoto:String(remuimpo),
+      aportejubi:String(aportejubi),aportepatr:String(aportepatr),
+      ad_caja_co:adCaja,aporte_caj:String(aporte_caj),contrib_ca:String(contrib_ca),
+      tiene_deud:tieneDeud,deuda_caja:gv('s-deuda_caja'),
+      d_svco:gv('s-d_svco'),d_ss:gv('s-d_ss'),d_svca:gv('s-d_svca'),d_sc:gv('s-d_sc'),
+    });
+    if(isDoc){a.ap_dcto788=gv('s-ap_dcto788');a.aporte_dif=gv('s-aporte_dif');}
+  }
+
+  // ── Obra Social ──
+  if(document.getElementById('o-codobra')){
+    const codobra=gv('o-codobra');const remutotal=fn(a,'remutotal');
+    const remuimpoos=fn(a,'remuimpoos')||remutotal;const cantAdh=parseInt(a.adherente)||0;
+    // Conservar apafilos y appatros del CSV — no recalcular para no pisar valores liquidados
+    const apafilos=fn(a,'apafilos')||0;
+    const appatros=fn(a,'appatros')||0;
+    a.codobra=codobra;a.apafilos=String(apafilos);a.appatros=String(appatros);
+    if(codobra==='009960'){
+      const pct=cantAdh>=2?0.05:cantAdh>=1?0.025:0;
+      const apo_vol=cantAdh>0?Math.max(r2(remuimpoos*pct),r2(OSEP_BASE_MIN*pct)):0;
+      const trasp_osep=Math.max(r2(remuimpoos*0.005),OSEP_TRASP_MIN);const tras_vol=cantAdh>0?trasp_osep:0;
+      // Usar valor editado si existe, sino el calculado
+      a.apo_vol=String(gv('o-apo_vol')||apo_vol);
+      a.tras_vol=String(gv('o-tras_vol')||tras_vol);
+      a.trasp_osep=String(trasp_osep);
+      a.cos_pro=gv('o-cos_pro');a.cos_alt=gv('o-cos_alt');a.cos_int=gv('o-cos_int');
+    } else {a.apo_vol='0';a.tras_vol='0';a.trasp_osep='0';a.cos_pro='0';a.cos_alt='0';a.cos_int='0';}
+  }
+
+  document.getElementById('dp-nombre').textContent=fv(a,'apeynom')||'Nuevo agente';
+  document.getElementById('dp-cuil').textContent=`CUIL: ${fv(a,'cuil')||'—'}  ·  Legajo: ${fv(a,'nroagente')||'—'}`;
+  renderTabla();
+  cerrarPanel();
+  guardarEnSheets();
+  mostrarToast('✓ Cambios guardados');
+}
+
+// ── ELIMINAR AGENTE ────────────────────────────────────────────────────
+function eliminarAgenteIdx(idx){
+  const nombre=fv(agentes[idx],'apeynom')||`agente ${idx+1}`;
+  confirmarAccion('Eliminar agente',`¿Eliminás a "${nombre}"?`,function(){
+    agentes.splice(idx,1);renderTabla();
+    guardarEnSheets(); // ← SINCRONIZAR
+    mostrarToast('🗑 Agente eliminado');
+  },'Eliminar');
+}
+
+function eliminarAgente(){
+  if(agenteIdx===null)return;const idx=agenteIdx;
+  const nombre=fv(agentes[idx],'apeynom')||`agente ${idx+1}`;
+  confirmarAccion('Eliminar agente',`¿Eliminás a "${nombre}"?`,function(){
+    agentes.splice(idx,1);cerrarPanel();renderTabla();
+    guardarEnSheets(); // ← SINCRONIZAR
+    mostrarToast('🗑 Agente eliminado');
+  },'Eliminar');
+}
+
+// ── VALIDACIONES ───────────────────────────────────────────────────────
+function procesarValidaciones(){
+  const errores=[];const cuils=[],ags=[];
+  const orgData=orgsActivos.find(o=>o.n===currentOrg);
+  const periodoDec=document.getElementById('d-periodo').value;
+  agentes.forEach((a,idx)=>{
+    const nl=idx+1;const cuil=fv(a,'cuil'),agente=fv(a,'nroagente'),apeynom=fv(a,'apeynom');
+    const esMag=fv(a,'act_doc')==='01';
+    const ag=cod=>{const[sev,desc]=ERRORES_DEF[cod]||['ADVERTENCIA','Error '+cod];errores.push({l:nl,cuil,agente,apeynom,esMag,cod,sev,desc});};
+    if(!apeynom)ag(1);if(!fv(a,'fecha_nac'))ag(2);if(!fv(a,'saf'))ag(6);
+    if(!fv(a,'ubicacion'))ag(7);if(!fv(a,'domicilio'))ag(32);if(!agente)ag(4);if(!fv(a,'fechaing'))ag(60);
+    if(!valCuil(cuil))ag(5);else if(cuils.includes(cuil))ag(17);else cuils.push(cuil);
+    if(agente){if(ags.includes(agente))ag(31);else ags.push(agente);}
+    if(!CODOBRA_OK.includes(fv(a,'codobra')))ag(8);if(!ACT_PERM.includes(fv(a,'actividad')))ag(3);
+    if(!['08','09'].includes(fv(a,'zonageo')))ag(22);if(fv(a,'codorigen')!=='0')ag(35);
+    if(fv(a,'tipoliq')!=='1')ag(49);if(!['F','M','X'].includes(fv(a,'sexo')))ag(42);
+    if(!['F','T'].includes(fv(a,'ad_caja_co')))ag(39);if(!['F','T'].includes(fv(a,'tiene_deud')))ag(40);
+    const dias=parseInt(fv(a,'dias_traba'))||0;if(dias<1||dias>30)ag(38);
+    const per2=fv(a,'periodo').trim();
+    if(!per2||!/^\d{6}$/.test(per2)){ag(13);}
+    else{const anio=parseInt(per2.slice(0,4)),mes=parseInt(per2.slice(4,6));if(anio<2000||anio>2099||mes<1||mes>12){ag(13);}else if(per2!==periodoDec){ag(13);}}
+    const fi=fv(a,'fechaing'),fn2=fv(a,'fecha_nac');
+    if(fi&&!fechaOk(fi))ag(61);if(fn2&&!fechaOk(fn2))ag(62);
+    if(fechaOk(fi)&&fechaOk(fn2)){
+      const dtFi=new Date(fi.slice(0,4),fi.slice(4,6)-1,fi.slice(6,8));
+      const dtFn=new Date(fn2.slice(0,4),fn2.slice(4,6)-1,fn2.slice(6,8));
+      if(dtFi<dtFn)ag(64);else if((dtFi-dtFn)/86400000/365<18)ag(63);
+    }
+    if(!esNum(fv(a,'remutotal')))ag(9);if(!esNum(fv(a,'remuimpo')))ag(10);
+    const remutotal=fn(a,'remutotal'),remuimpo=fn(a,'remuimpo'),remuimpoos=fn(a,'remuimpoos');
+    const remusueldo=fn(a,'remusueldo'),remusac=fn(a,'remusac'),hsextras=fn(a,'hsextras');
+    const conceptono=fn(a,'conceptono'),premios=fn(a,'premios'),vacaciones=fn(a,'vacaciones'),canasta=fn(a,'canasta_fl');
+    if(!igual(remuimpo,r2(remusueldo+remusac+hsextras)))ag(46);else if(remuimpo>remutotal)ag(47);
+    if(!igual(remutotal,r2(remuimpo+conceptono+premios+vacaciones+canasta)))ag(45);
+    if(!igual(remuimpoos,remutotal))ag(30);
+    const aportejubi=fn(a,'aportejubi');
+    if(esMag){if(!igual(aportejubi,r2(remuimpo*0.18)))ag(53);}
+    else{if(!igual(aportejubi,Math.min(r2(remuimpo*0.11),ANSES_APORTE_MAX)))ag(53);if(dias===30&&aportejubi<ANSES_APORTE_MIN-TOL)ag(18);if(aportejubi>ANSES_APORTE_MAX+TOL)ag(71);}
+    if(!igual(fn(a,'aportepatr'),r2(remuimpo*PCT_CONTRIB_PATRONAL)))ag(52);
+    if(dias===30&&fn(a,'aportepatr')<ANSES_CONTRIB_MIN-TOL)ag(75);
+    if(fn(a,'apafilos')<OSEP_APORTE_MIN-TOL)ag(65);if(fn(a,'appatros')<OSEP_CONTRIB_MIN-TOL)ag(66);
+    if(fv(a,'codobra')==='009960'){const t=fn(a,'trasp_osep');if(t===0)ag(74);else if(t<OSEP_TRASP_MIN-TOL)ag(67);}
+    if(!fv(a,'d_svco')||fn(a,'d_svco')===0)ag(72);else if(!igual(fn(a,'d_svco'),D_SVCO_VAL))ag(54);
+    if(!fv(a,'d_ss')||fn(a,'d_ss')===0)ag(73);else if(!igual(fn(a,'d_ss'),D_SS_VAL))ag(55);
+    if(fv(a,'ad_caja_co')==='T'){
+      if(!igual(fn(a,'aporte_caj'),r2(remutotal*CAJA_APORTE_PCT)))ag(24);
+      if(!igual(fn(a,'contrib_ca'),r2(remutotal*CAJA_CONTRIB_PCT)))ag(25);
+      if(fn(a,'aporte_caj')<CAJA_APORTE_MIN-TOL)ag(76);
+      if(CAJA_SUELDO_GOB>0&&fn(a,'aporte_caj')>r2(CAJA_SUELDO_GOB*CAJA_APORTE_PCT)+TOL)ag(77);
+      if(CAJA_SUELDO_GOB>0&&fn(a,'contrib_ca')>r2(CAJA_SUELDO_GOB*CAJA_CONTRIB_PCT)+TOL)ag(78);
+    }
+    if(orgData){const codCSV=parseInt(fv(a,'codigo'))||0;if(codCSV!==0&&codCSV!==orgData.c)ag(48);}
+  });
+  csvErrores=errores;calcularTotales();
+  const conteoFull={};
+  errores.forEach(e=>{const k=e.sev+'|'+e.cod;if(!conteoFull[k])conteoFull[k]={e,count:0,cuils:[]};conteoFull[k].count++;if(e.cuil&&!conteoFull[k].cuils.includes(e.cuil))conteoFull[k].cuils.push(e.cuil);});
+  const criticos=errores.filter(e=>e.sev==='CRÍTICO');const adv=errores.filter(e=>e.sev==='ADVERTENCIA');
+  let html='';
+  if(!criticos.length&&!adv.length){
+    html=`<div class="alert a-ok"><span class="ai">✓</span><div><strong>${agentes.length} registros sin errores.</strong></div></div>`;
+    document.getElementById('btn-continuar-ok').classList.remove('hidden');document.getElementById('btn-aceptar-warn').classList.add('hidden');
+  } else if(!criticos.length){
+    html=`<div class="alert a-warn"><span class="ai">⚠</span><div><strong>${agentes.length} registros — ${adv.length} advertencia(s).</strong> No hay errores críticos.</div></div>`;
+    document.getElementById('btn-aceptar-warn').classList.remove('hidden');document.getElementById('btn-continuar-ok').classList.add('hidden');
+  } else {
+    html=`<div class="alert a-err"><span class="ai">✕</span><div><strong>${criticos.length} error(es) CRÍTICO(s) en ${agentes.length} registros.</strong></div></div>`;
+    if(adv.length)html+=`<div class="alert a-warn"><span class="ai">⚠</span>${adv.length} advertencia(s) adicionales.</div>`;
+    document.getElementById('btn-aceptar-warn').classList.add('hidden');document.getElementById('btn-continuar-ok').classList.add('hidden');
+  }
+  document.getElementById('val-resumen').innerHTML=html;
+  if(errores.length){renderErrList(Object.values(conteoFull).sort((a,b)=>a.e.sev==='CRÍTICO'?-1:1),'TODOS');document.getElementById('val-detalle').classList.remove('hidden');}
+  else document.getElementById('val-detalle').classList.add('hidden');
+}
+
+function renderErrList(items,filtro){
+  const lista=filtro==='TODOS'?items:items.filter(x=>x.e.sev===filtro);
+  document.getElementById('err-list').innerHTML=lista.length
+    ? lista.map(({e,count,cuils})=>{
+        const cls=e.sev==='CRÍTICO'?'err-crit':'err-adv';
+        const cuilStr=cuils&&cuils.length?`<div style="font-size:10px;color:var(--text2);margin-top:2px;grid-column:1/-1">CUILs: ${cuils.slice(0,5).join(', ')}${cuils.length>5?' ... y '+(cuils.length-5)+' más':''}</div>`:'';
+        return`<div style="padding:6px 10px;border-bottom:1px solid var(--border);font-size:11px">
+          <div style="display:grid;grid-template-columns:30px 95px 1fr 65px;gap:6px;align-items:center">
+            <span class="${cls}" style="font-size:10px;font-weight:700">${e.cod}</span><span class="${cls}">${e.sev}</span>
+            <span>${e.desc}</span><span style="color:var(--text2);text-align:right;font-size:10px">${count} caso(s)</span>
+          </div>${cuilStr}</div>`;
+      }).join('')
+    : '<div style="padding:10px;color:var(--text2);text-align:center">Sin resultados</div>';
+}
+
+function filtrarErr(f){
+  const conteo={};
+  csvErrores.forEach(e=>{const k=e.sev+'|'+e.cod;if(!conteo[k])conteo[k]={e,count:0,cuils:[]};conteo[k].count++;if(e.cuil&&!conteo[k].cuils.includes(e.cuil))conteo[k].cuils.push(e.cuil);});
+  renderErrList(Object.values(conteo).sort((a,b)=>a.e.sev==='CRÍTICO'?-1:1),f);
+}
+
+// ── TOTALES ────────────────────────────────────────────────────────────
+function calcularTotales(){
+  totales={cargos:0,remutotal:0,remuimpo:0,remuimpoos:0,conceptono:0,canasta:0,premios:0,vacaciones:0,
+    remusueldo:0,remusac:0,hsextras:0,asigfliar:0,exessocial:0,exeosocial:0,
+    aportejubi:0,aportepatr:0,apafilos:0,appatros:0,trasp_osep:0,
+    aporte_caj:0,contrib_ca:0,deuda_caja:0,agentes_caja:0,agentes_deuda:0,
+    d_svco:0,d_ss:0,d_svca:0,d_sc:0,ap_dcto788:0,aporte_dif:0,remu_doc:0,funcionarios:0};
+  agentes.forEach(a=>{
+    totales.cargos++;
+    ['remutotal','remuimpo','remuimpoos','conceptono','canasta_fl','premios','vacaciones',
+     'remusueldo','remusac','hsextras','asigfliar','exessocial','exeosocial',
+     'aportejubi','aportepatr','apafilos','appatros','trasp_osep',
+     'aporte_caj','contrib_ca','d_svco','d_ss','d_svca','d_sc','ap_dcto788','aporte_dif','remu_doc']
+    .forEach(c=>{const k=c==='canasta_fl'?'canasta':c;if(totales[k]!==undefined)totales[k]+=fn(a,c);});
+    if(fv(a,'ad_caja_co')==='T')totales.agentes_caja++;
+    if(fv(a,'tiene_deud')==='T'){totales.agentes_deuda++;totales.deuda_caja+=fn(a,'deuda_caja');}
+    if(fv(a,'funcionari')==='T')totales.funcionarios++;
+  });
+  totales.canasta=agentes.reduce((s,a)=>s+fn(a,'canasta_fl'),0);
+}
+
+// ── DDJJ ───────────────────────────────────────────────────────────────
+function campos(){
+  return{
+    per:document.getElementById('d-periodo').value,tipo:document.getElementById('d-tipo').value,
+    org:document.getElementById('d-organismo').value,cuit:'',
+    dir:document.getElementById('d-direccion').value,tel:document.getElementById('d-telefono').value,
+    email:document.getElementById('d-email').value,cargoAuto:document.getElementById('d-cargo-auto').value,
+    nombreAuto:document.getElementById('d-nombre-auto').value,cargoRH:document.getElementById('d-cargo-rh').value,
+    nombreRH:document.getElementById('d-nombre-rh').value,
+  };
+}
+
+function generarDDJJ(){
+  calcularTotales();const T=totales,c=campos();
+  const tipoStr=c.tipo==='0'?'0 - Original':'Rectificativa '+c.tipo;
+  const hoy=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}).toUpperCase();
+  const dr=(l,v)=>`<div class="ddjj-r"><span class="ddjj-l">${l}</span><span class="ddjj-v">${v}</span></div>`;
+  document.getElementById('ddjj-preview').innerHTML=`
+  <div class="ddjj-hdr">
+    <div style="display:flex;justify-content:space-between;align-items:center">
+      <div><div style="font-size:10px;color:var(--text2)">${c.org} — ${hoy}</div>
+        <div style="font-weight:700;font-size:12px;margin-top:2px">SILI 8.0 — NOTA DE PRESENTACION DE INFORMACION PREVISIONAL</div></div>
+      <div style="font-weight:800;color:var(--green-dark);font-size:14px">AGAP</div>
+    </div>
+  </div>
+  <div class="ddjj-body">
+    <div class="ddjj-sec">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;font-size:11px">
+        <div><span class="ddjj-l">Organismo: </span><strong>${c.org}</strong></div><div></div>
+        <div><span class="ddjj-l">Dirección: </span>${c.dir}</div><div><span class="ddjj-l">Teléfono: </span>${c.tel||'—'}</div>
+        <div style="grid-column:1/-1"><span class="ddjj-l">E-Mail: </span>${c.email||'—'}</div>
+        <div><span class="ddjj-l">Cargo Autoridad Máxima: </span>${c.cargoAuto}</div><div><span class="ddjj-l">Apellido y Nombre: </span><strong>${c.nombreAuto}</strong></div>
+        <div><span class="ddjj-l">Cargo Responsable R.H.: </span>${c.cargoRH}</div><div><span class="ddjj-l">Apellido y Nombre: </span><strong>${c.nombreRH}</strong></div>
+      </div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;margin-top:8px;padding:6px 10px;background:var(--bg2);border-radius:var(--radius)">
+        <div><span class="ddjj-l">Período: </span><strong>${c.per}</strong></div>
+        <div><span class="ddjj-l">Tipo: </span><strong>${tipoStr}</strong></div>
+      </div>
+    </div>
+    <div class="ddjj-sec"><div class="ddjj-sec-t">Total de Remuneraciones</div>
+      <div class="ddjj-g">
+        ${dr('Cantidad de cargos',T.cargos)}${dr('Rem. Sueldo',fmt(T.remusueldo))}
+        ${dr('Remuneración Total',fmt(T.remutotal))}${dr('Rem. S.A.C.',fmt(T.remusac))}
+        ${dr('Concepto No Remun.',fmt(T.conceptono))}${dr('Rem. Hs. Extras',fmt(T.hsextras))}
+        ${dr('Canasta Familiar',fmt(T.canasta))}${dr('Rem. Imp. S.S.',fmt(T.remuimpo))}
+        ${dr('Premios',fmt(T.premios))}${dr('Rem. Imp. O.S.',fmt(T.remuimpoos))}
+        ${dr('Vacaciones',fmt(T.vacaciones))}${dr('Asig. Familiares',fmt(T.asigfliar))}
+        ${dr('Remuneración Docente',fmt(T.remu_doc))}${dr('Funcionarios',T.funcionarios)}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+      <div class="ddjj-sec"><div class="ddjj-sec-t">Seguridad Social</div>
+        ${dr('Aporte S.S.',fmt(T.aportejubi))}${dr('Contribución Patr.',fmt(T.aportepatr))}
+        ${dr('Aporte Dcto. 788',fmt(T.ap_dcto788))}${dr('Aporte Dif. Doc.',fmt(T.aporte_dif))}
+      </div>
+      <div class="ddjj-sec"><div class="ddjj-sec-t">Obra Social</div>
+        ${dr('Aporte O.S.',fmt(T.apafilos))}${dr('Contribución Patr.',fmt(T.appatros))}
+        ${dr('Fondo Trasplante',fmt(T.trasp_osep))}
+      </div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:6px">
+      <div class="ddjj-sec"><div class="ddjj-sec-t">Caja Complementaria</div>
+        ${dr('Agentes adheridos',T.agentes_caja)}${dr('Aporte Caja',fmt(T.aporte_caj))}
+        ${dr('Contribución Caja',fmt(T.contrib_ca))}${dr('Deuda Caja',fmt(T.deuda_caja))}
+      </div>
+      <div class="ddjj-sec"><div class="ddjj-sec-t">Seguros</div>
+        ${dr('Seg. Obligatorio',fmt(T.d_svco))}${dr('Seg. Sepelio',fmt(T.d_ss))}
+        ${dr('Seg. Adicional',fmt(T.d_svca))}${dr('Seg. Cónyuge',fmt(T.d_sc))}
+      </div>
+    </div>
+    <div class="ddjj-decla">Declaro que los datos consignados en este formulario, como así también la información nominativa suministrada en formato digital, son correctos y completos y que han sido realizados de acuerdo con el Programa entregado por la A.G.A.P., sin omitir ni falsear dato alguno que deban contener, siendo fiel expresión de la verdad.</div>
+    <div class="sign-row">
+      <div class="sign-box"><div style="font-weight:600">${c.nombreAuto}</div><div style="color:var(--text2)">${c.cargoAuto} — Autoridad Máxima</div></div>
+      <div class="sign-box"><div style="font-weight:600">${c.nombreRH}</div><div style="color:var(--text2)">${c.cargoRH} — Responsable R.H.</div></div>
+    </div>
+  </div>`;
+}
+
+// ── PDF ────────────────────────────────────────────────────────────────
+function sanitizePDF(s){
+  return String(s||'')
+    .replace(/[áàä]/g,'a').replace(/[ÁÀÄ]/g,'A').replace(/[éèë]/g,'e').replace(/[ÉÈË]/g,'E')
+    .replace(/[íìï]/g,'i').replace(/[ÍÌÏ]/g,'I').replace(/[óòö]/g,'o').replace(/[ÓÒÖ]/g,'O')
+    .replace(/[úùü]/g,'u').replace(/[ÚÙÜ]/g,'U').replace(/[ñ]/g,'n').replace(/[Ñ]/g,'N')
+    .replace(/[^\x20-\x7E]/g,' ').trim();
+}
+
+function generarPDFBlob(){
+  try{
+    const{jsPDF}=window.jspdf;if(!jsPDF)throw new Error('jsPDF no disponible');
+    const doc=new jsPDF({orientation:'portrait',unit:'mm',format:'a4'});
+    const W=210,M=14;let y=14;const T=totales,c=campos();
+    const tipoStr=c.tipo==='0'?'0 - Original':'Rectificativa '+c.tipo;
+    const hoy=new Date().toLocaleDateString('es-AR',{day:'2-digit',month:'long',year:'numeric'}).toUpperCase();
+    const org=sanitizePDF(c.org),dir=sanitizePDF(c.dir),tel=sanitizePDF(c.tel||'—');
+    const email=sanitizePDF(c.email||'—'),cargoAuto=sanitizePDF(c.cargoAuto),nombreAuto=sanitizePDF(c.nombreAuto);
+    const cargoRH=sanitizePDF(c.cargoRH),nombreRH=sanitizePDF(c.nombreRH),per=sanitizePDF(c.per);
+    const h=(f='normal',sz=8,col=[40,40,40])=>{doc.setFontSize(sz);doc.setFont('helvetica',f);doc.setTextColor(...col);};
+    const ln=()=>{doc.setDrawColor(200,200,200);doc.line(M,y,W-M,y);y+=3;};
+    const sec=t=>{y+=1;doc.setFillColor(235,235,235);doc.rect(M,y-3,W-M*2,5,'F');h('bold',7,[60,60,60]);doc.text(sanitizePDF(t),M+1,y);y+=4;};
+    const r2l=(l1,v1,l2,v2)=>{h('normal',8);doc.text(sanitizePDF(l1),M,y);h('bold',8);doc.text(sanitizePDF(String(v1)),88,y,{align:'right'});h('normal',8);doc.text(sanitizePDF(l2),100,y);h('bold',8);doc.text(sanitizePDF(String(v2)),W-M,y,{align:'right'});y+=4.5;};
+    const r1l=(l,v)=>{h('normal',8);doc.text(sanitizePDF(l),M,y);h('bold',8);doc.text(sanitizePDF(String(v)),W-M,y,{align:'right'});y+=4.5;};
+    h('normal',8,[100,100,100]);doc.text(`${org}   ${hoy}`,M,y);y+=5;
+    h('bold',11,[20,20,20]);doc.text('SILI 8.0 - NOTA DE PRESENTACION DE INFORMACION PREVISIONAL',W/2,y,{align:'center'});y+=7;
+    ln();r1l('Organismo:',org);r2l('Direccion:',dir,'Telefono:',tel);r1l('E-Mail:',email);
+    r2l('Cargo Autoridad Maxima:',cargoAuto,'Apellido y Nombre:',nombreAuto);
+    r2l('Cargo Responsable R.H.:',cargoRH,'Apellido y Nombre:',nombreRH);
+    ln();r2l('Periodo de liquidacion:',per,'Tipo de declaracion:',tipoStr);ln();
+    sec('TOTAL DE REMUNERACIONES');
+    r2l('Cantidad de cargos:',T.cargos,'Rem. Sueldo:',fmt(T.remusueldo));
+    r2l('Remuneracion Total:',fmt(T.remutotal),'Rem. S.A.C.:',fmt(T.remusac));
+    r2l('Concepto No Remun.:',fmt(T.conceptono),'Rem. Hs. Extras:',fmt(T.hsextras));
+    r2l('Canasta Familiar:',fmt(T.canasta),'Rem. Imp. S.S.:',fmt(T.remuimpo));
+    r2l('Premios:',fmt(T.premios),'Rem. Imp. O.S.:',fmt(T.remuimpoos));
+    r2l('Vacaciones:',fmt(T.vacaciones),'Asig. Familiares:',fmt(T.asigfliar));
+    r2l('Remuneracion Docente:',fmt(T.remu_doc),'Funcionarios:',T.funcionarios);
+    sec('SEGURIDAD SOCIAL');
+    r2l('Aporte S.S.:',fmt(T.aportejubi),'Contribucion Patr.:',fmt(T.aportepatr));
+    r2l('Aporte Dcto. 788:',fmt(T.ap_dcto788),'Aporte Diferencial Doc.:',fmt(T.aporte_dif));
+    sec('OBRA SOCIAL');
+    r2l('Aporte O.S.:',fmt(T.apafilos),'Contribucion Patr.:',fmt(T.appatros));
+    r1l('Fondo Trasplante:',fmt(T.trasp_osep));
+    sec('CAJA COMPLEMENTARIA');
+    r2l('Agentes adheridos:',T.agentes_caja,'Aporte Caja:',fmt(T.aporte_caj));
+    r2l('Contribucion Caja:',fmt(T.contrib_ca),'Deuda Caja:',fmt(T.deuda_caja));
+    sec('SEGUROS');
+    r2l('Seguro Obligatorio:',fmt(T.d_svco),'Seguro Sepelio:',fmt(T.d_ss));
+    r2l('Seguro Adicional:',fmt(T.d_svca),'Seguro Conyuge:',fmt(T.d_sc));
+    y+=4;
+    const decla='Declaro que los datos consignados en este formulario son correctos y completos y han sido realizados de acuerdo con el Programa entregado por la A.G.A.P., sin omitir ni falsear dato alguno, siendo fiel expresion de la verdad.';
+    h('italic',7.5,[90,90,90]);const ls=doc.splitTextToSize(decla,W-M*2);doc.text(ls,M,y);y+=ls.length*4+8;
+    doc.setDrawColor(40,40,40);doc.line(M,y,85,y);doc.line(115,y,W-M,y);y+=4;
+    h('bold',8,[20,20,20]);doc.text(nombreAuto,M,y);doc.text(nombreRH,115,y);y+=3.5;
+    h('normal',7,[90,90,90]);doc.text(`${cargoAuto} - Autoridad Maxima`,M,y);doc.text(`${cargoRH} - Responsable R.H.`,115,y);
+    return doc.output('blob');
+  }catch(err){console.error('Error PDF:',err);mostrarToast('⚠ Error al generar PDF: '+err.message);return null;}
+}
+
+function descargarPDF(){
+  const c=campos();const blob=generarPDFBlob();if(!blob)return;
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download=`DDJJ_${c.org.replace(/ /g,'_')}_${c.per}.pdf`;
+  document.body.appendChild(a);a.click();setTimeout(()=>document.body.removeChild(a),100);
+}
+
+function generarCSVString(){
+  const c=campos();const orgData=ORGS.find(o=>o.n===currentOrg);
+  return agentes.map(a=>{
+    const row={...a};row.periodo=c.per;row.declara=c.tipo;row.codigo=String(orgData?.c||'');
+    return COLS.map(col=>(row[col]||'')).join(',');
+  }).join('\n');
+}
+
+// ── CONFIRMACION Y ENVIO ───────────────────────────────────────────────
+function renderConfirmacion(){
+  const c=campos();const criticos=csvErrores.filter(e=>e.sev==='CRÍTICO').length;const adv=csvErrores.filter(e=>e.sev==='ADVERTENCIA').length;
+  document.getElementById('paso5-content').innerHTML=`
+    <div class="ct">Confirmar envío</div>
+    <div class="cs">Al confirmar se descargará el CSV y la DDJJ en PDF, y se enviará un email a la CIA. El borrador guardado se eliminará.</div>
+    <div class="alert a-info"><span class="ai">ℹ</span><div>
+      <strong>${c.org}</strong> — Período <strong>${c.per}</strong> — Tipo: ${c.tipo==='0'?'Original':'Rectificativa '+c.tipo}<br>
+      Responsable: ${c.nombreRH} · Agentes: ${agentes.length} · Errores críticos: <strong>${criticos}</strong> · Advertencias: <strong>${adv}</strong>
+    </div></div>
+    <div id="email-status"></div>
+    <div id="confirm-btnrow" class="btn-row">
+      <button class="btn-sm" onclick="irPaso4()">← Revisar DDJJ</button>
+      <button class="btn-primary" id="btn-confirmar" onclick="confirmarEnvio()">✓ Confirmar y enviar</button>
+    </div>`;
+}
+
+async function confirmarEnvio(){
+  const c=campos();
+  const criticos=csvErrores.filter(e=>e.sev==='CRÍTICO').length;const adv=csvErrores.filter(e=>e.sev==='ADVERTENCIA').length;
+  const estado=criticos>0?'critico':adv>0?'advertencia':'ok';
+  const btn=document.getElementById('btn-confirmar');const btnRow=document.getElementById('confirm-btnrow');const st=document.getElementById('email-status');
+  if(btnRow)btnRow.style.display='none';
+  if(btn){btn.disabled=true;btn.innerHTML='<span class="spinner"></span>Procesando...';}
+  if(st)st.innerHTML='<div class="alert a-info"><span class="ai">ℹ</span>Generando archivos...</div>';
+  const ahora=new Date();
+  const csvStr=generarCSVString();
+  const csvBlob=new Blob([csvStr],{type:'text/csv;charset=utf-8;'});
+  const nombreBase=`${c.org.replace(/[^a-zA-Z0-9]/g,'_')}_${c.per}`;
+  let pdfBlob=null;try{pdfBlob=generarPDFBlob();}catch(e){}
+  function descargarBlob(blob,nombre){
+    if(!blob)return;
+    try{const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=nombre;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(url);document.body.removeChild(a);},500);}catch(e){}
+  }
+  descargarBlob(csvBlob,`CSB_${nombreBase}.csv`);
+  setTimeout(()=>descargarBlob(pdfBlob,`DDJJ_${nombreBase}.pdf`),800);
+
+  let emailOk=false;
+  try{
+    if(st)st.innerHTML='<div class="alert a-info"><span class="ai">ℹ</span>Enviando email...</div>';
+    await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TEMPLATE_ID,{
+      organismo:c.org,periodo:c.per,responsable:c.nombreRH,agentes:String(agentes.length),
+      criticos:String(criticos),advertencias:String(adv),estado:estado.toUpperCase(),
+      fecha:ahora.toLocaleString('es-AR'),
+      mensaje:`Organismo: ${c.org} | Periodo: ${c.per} | Responsable: ${c.nombreRH} | Agentes: ${agentes.length}`,
+    });
+    emailOk=true;
+    if(st)st.innerHTML=`<div class="alert a-ok"><span class="ai">✓</span>Archivos generados correctamente. Por favor, envielos a ${EMAIL_DESTINO}</div>`;
+  }catch(e){
+    if(st)st.innerHTML=`<div class="alert a-warn"><span class="ai">⚠</span>Email no enviado. Los archivos se descargaron localmente.</div>`;
+  }
+
+  // Limpiar borrador en Sheets al confirmar envío
+  await limpiarEnSheets();
+  setSyncIndicator('ok','✓ Borrador eliminado');
+
+  envios.unshift({
+    id:Date.now(),organismo:c.org,periodo:c.per,tipo:c.tipo==='0'?'Original':'Rectificativa '+c.tipo,
+    responsable:c.nombreRH,agentes:agentes.length,criticos,advertencias:adv,estado,emailOk,
+    fecha:ahora.toLocaleDateString('es-AR'),hora:ahora.toLocaleTimeString('es-AR',{hour:'2-digit',minute:'2-digit'})
+  });
+  renderHist();
+
+  const emailStatusHTML=st?st.innerHTML:'';
+  const contenido=document.getElementById('paso5-content');
+  if(contenido){
+    contenido.innerHTML=`
+      <div class="ct">Envío completado</div>
+      <div style="margin-bottom:10px">${emailStatusHTML}</div>
+      <div class="alert a-ok"><span class="ai">✓</span><div>
+        <strong>Envío registrado — ${c.org} — Período ${c.per}</strong><br>
+        ${ahora.toLocaleString('es-AR')} · CSV${pdfBlob?' y DDJJ PDF':''} descargado(s).
+      </div></div>
+      <div class="btn-row">
+        <button class="btn-sm btn-primary" onclick="nuevoEnvio()">Nuevo envío</button>
+      </div>`;
+  }
+}
+
+function nuevoEnvio(){
+  agentes=[];csvErrores=[];totales={};csvFile=null;agenteIdx=null;
+  const fi=document.getElementById('fi-csv');if(fi)try{fi.value='';}catch(e){}
+  const csvInfo=document.getElementById('csv-info');if(csvInfo)csvInfo.classList.add('hidden');
+  const dz=document.getElementById('dz-csv');if(dz)dz.style.display='';
+  const ac=document.getElementById('agentes-card');if(ac)ac.classList.add('hidden');
+  const tb=document.getElementById('agentes-tbody');if(tb)tb.innerHTML='';
+  const vr=document.getElementById('val-resumen');if(vr)vr.innerHTML='';
+  const vd=document.getElementById('val-detalle');if(vd)vd.classList.add('hidden');
+  const bco=document.getElementById('btn-continuar-ok');if(bco)bco.classList.add('hidden');
+  const baw=document.getElementById('btn-aceptar-warn');if(baw)baw.classList.add('hidden');
+  const dp=document.getElementById('d-periodo');if(dp)dp.value='';
+  setStep(1);
+}
+
+function renderHist(){
+  const mis=envios.filter(e=>e.organismo===currentOrg);
+  const t=document.getElementById('hist-table');
+  if(!mis.length){t.innerHTML='<p style="font-size:11px;color:var(--text2)">Sin envíos aún.</p>';return;}
+  t.innerHTML=`<table><thead><tr><th>Período</th><th>Tipo</th><th>Responsable</th><th>Agentes</th><th>Crít.</th><th>Adv.</th><th>Fecha/Hora</th><th>Email</th><th>Estado</th></tr></thead><tbody>
+  ${mis.map(e=>`<tr><td>${e.periodo}</td><td>${e.tipo}</td><td>${e.responsable}</td>
+    <td style="text-align:center">${e.agentes}</td>
+    <td style="text-align:center;color:var(--red);font-weight:600">${e.criticos}</td>
+    <td style="text-align:center;color:var(--amber)">${e.advertencias}</td>
+    <td>${e.fecha} ${e.hora}</td>
+    <td>${e.emailOk?'<span class="pill p-ok">✓</span>':'<span class="pill p-warn">—</span>'}</td>
+    <td>${estadoPill(e.estado)}</td></tr>`).join('')}</tbody></table>`;
+}
+
+// ── ADMIN ──────────────────────────────────────────────────────────────
+function refreshAdmin(){
+  document.getElementById('m-tot').textContent=envios.length;
+  document.getElementById('m-ok').textContent=envios.filter(e=>e.estado==='ok').length;
+  document.getElementById('m-warn').textContent=envios.filter(e=>e.estado==='advertencia').length;
+  document.getElementById('m-crit').textContent=envios.filter(e=>e.estado==='critico').length;
+  const ar=document.getElementById('a-recent');
+  if(!envios.length){ar.innerHTML='<p style="font-size:11px;color:var(--text2)">Sin envíos.</p>';return;}
+  ar.innerHTML=`<table><thead><tr><th>Organismo</th><th>Período</th><th>Responsable</th><th>Agentes</th><th>Crít.</th><th>Adv.</th><th>Fecha/Hora</th><th>Estado</th></tr></thead><tbody>
+  ${envios.slice(0,10).map(e=>`<tr><td>${e.organismo}</td><td>${e.periodo}</td><td>${e.responsable}</td><td style="text-align:center">${e.agentes}</td><td style="text-align:center;color:var(--red)">${e.criticos}</td><td style="text-align:center;color:var(--amber)">${e.advertencias}</td><td>${e.fecha} ${e.hora}</td><td>${estadoPill(e.estado)}</td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderAdminAll(){
+  const f=(document.getElementById('filtro-org').value||'').toLowerCase();
+  const lista=envios.filter(e=>e.organismo.toLowerCase().includes(f));
+  const el=document.getElementById('a-all');
+  if(!lista.length){el.innerHTML='<p style="font-size:11px;color:var(--text2)">Sin envíos.</p>';return;}
+  el.innerHTML=`<table><thead><tr><th>Organismo</th><th>Período</th><th>Tipo</th><th>Responsable</th><th>Agentes</th><th>Crít.</th><th>Adv.</th><th>Fecha/Hora</th><th>Email</th><th>Estado</th></tr></thead><tbody>
+  ${lista.map(e=>`<tr><td>${e.organismo}</td><td>${e.periodo}</td><td>${e.tipo}</td><td>${e.responsable}</td><td style="text-align:center">${e.agentes}</td><td style="text-align:center;color:var(--red)">${e.criticos}</td><td style="text-align:center;color:var(--amber)">${e.advertencias}</td><td>${e.fecha} ${e.hora}</td><td>${e.emailOk?'✓':'—'}</td><td>${estadoPill(e.estado)}</td></tr>`).join('')}</tbody></table>`;
+}
+
+function renderAdminOrgs(){
+  const f=(document.getElementById('filtro-admin-org')||{value:''}).value.toLowerCase();
+  const lista=orgsActivos.filter(o=>o.n.toLowerCase().includes(f)||String(o.c).includes(f));
+  const el=document.getElementById('a-orgs');if(!el)return;
+  el.innerHTML=`<table><thead><tr><th>Código</th><th>Organismo</th><th>Clave</th><th>Envíos</th><th>Último envío</th><th style="width:80px"></th></tr></thead>
+    <tbody>${lista.map(o=>{
+      const mis=envios.filter(e=>e.organismo===o.n).length;const ult=envios.find(e=>e.organismo===o.n);
+      return`<tr><td style="font-family:var(--mono)">${pad(o.c)}</td><td style="font-weight:500">${o.n}</td>
+        <td style="font-family:var(--mono);font-size:11px;color:var(--text2)">${claves[o.n]||'—'}</td>
+        <td style="text-align:center">${mis}</td><td style="font-size:11px">${ult?`${ult.fecha} ${ult.hora}`:'—'}</td>
+        <td><button class="btn-sm btn-info" data-org="${o.n}">✏ Editar</button></td></tr>`;
+    }).join('')}</tbody></table>`;
+  el.querySelectorAll('button[data-org]').forEach(btn=>{btn.addEventListener('click',function(){abrirModalOrg(this.getAttribute('data-org'));});});
+}
+
+let modalOrgEditando=null;
+
+function abrirModalOrg(nombreOrg){
+  modalOrgEditando=nombreOrg||null;
+  const modal=document.getElementById('modal-org');const title=document.getElementById('modal-org-title');
+  const btnDel=document.getElementById('mo-btn-del');const err=document.getElementById('mo-err');
+  err.classList.add('hidden');
+  if(nombreOrg){
+    const org=orgsActivos.find(o=>o.n===nombreOrg);
+    title.textContent=`Editar — ${nombreOrg}`;document.getElementById('mo-cod').value=org?org.c:'';
+    document.getElementById('mo-nombre').value=nombreOrg;document.getElementById('mo-clave').value=claves[nombreOrg]||'';
+    btnDel.classList.remove('hidden');
+  } else {
+    title.textContent='Agregar organismo';document.getElementById('mo-cod').value='';
+    document.getElementById('mo-nombre').value='';document.getElementById('mo-clave').value='';btnDel.classList.add('hidden');
+  }
+  modal.classList.remove('hidden');
+}
+
+function cerrarModalOrg(){document.getElementById('modal-org').classList.add('hidden');modalOrgEditando=null;}
+
+function guardarOrgModal(){
+  const cod=parseInt(document.getElementById('mo-cod').value)||0;
+  const nombre=document.getElementById('mo-nombre').value.trim();
+  const clave=document.getElementById('mo-clave').value.trim();
+  const errEl=document.getElementById('mo-err');const errMsg=document.getElementById('mo-err-msg');
+  function mostrarErr(msg){errEl.classList.remove('hidden');errMsg.textContent=msg;}
+  if(!cod||cod<1||cod>999){mostrarErr('El código debe ser un número entre 1 y 999');return;}
+  if(!nombre){mostrarErr('El nombre del organismo es obligatorio');return;}
+  if(!clave||clave.length<4){mostrarErr('La clave debe tener al menos 4 caracteres');return;}
+  if(!modalOrgEditando||modalOrgEditando!==nombre){if(orgsActivos.find(o=>o.n===nombre)){mostrarErr('Ya existe un organismo con ese nombre');return;}}
+  const orgActual=modalOrgEditando?orgsActivos.find(o=>o.n===modalOrgEditando):null;
+  if(!orgActual||orgActual.c!==cod){if(orgsActivos.find(o=>o.c===cod&&o.n!==modalOrgEditando)){mostrarErr('Ya existe un organismo con ese código');return;}}
+  if(modalOrgEditando){
+    const idx=orgsActivos.findIndex(o=>o.n===modalOrgEditando);
+    if(idx>=0){if(modalOrgEditando!==nombre){claves[nombre]=clave;delete claves[modalOrgEditando];}else{claves[nombre]=clave;}orgsActivos[idx]={c:cod,n:nombre};}
+    mostrarToast('✓ Organismo actualizado');
+  } else {orgsActivos.push({c:cod,n:nombre});claves[nombre]=clave;mostrarToast('✓ Organismo agregado');}
+  actualizarSelectOrg();cerrarModalOrg();renderAdminOrgs();
+}
+
+function eliminarOrgModal(){
+  if(!modalOrgEditando)return;const nombre=modalOrgEditando;
+  confirmarAccion('Eliminar organismo',`¿Eliminás "${nombre}"?`,function(){
+    const idx=orgsActivos.findIndex(o=>o.n===nombre);if(idx>=0)orgsActivos.splice(idx,1);
+    delete claves[nombre];actualizarSelectOrg();cerrarModalOrg();renderAdminOrgs();mostrarToast('🗑 Organismo eliminado');
+  },'Eliminar');
+}
+
+function actualizarSelectOrg(){
+  const sel=document.getElementById('sel-org');if(!sel)return;
+  sel.innerHTML='<option value="">— Seleccioná —</option><option value="ADMIN">★ Administrador (CIA)</option>';
+  orgsActivos.forEach(o=>{const opt=document.createElement('option');opt.value=o.n;opt.textContent=`${pad(o.c)} — ${o.n}`;sel.appendChild(opt);});
+}
+
+function exportarRegistroCSV(){
+  if(!envios.length){alert('Sin envíos para exportar.');return;}
+  const h='Organismo,Período,Tipo,Responsable,Agentes,Críticos,Advertencias,Fecha,Hora,Email,Estado';
+  const rows=envios.map(e=>`${e.organismo},${e.periodo},${e.tipo},${e.responsable},${e.agentes},${e.criticos},${e.advertencias},${e.fecha},${e.hora},${e.emailOk?'Sí':'No'},${e.estado}`);
+  const blob=new Blob([[h,...rows].join('\n')],{type:'text/csv;charset=utf-8;'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='registro_envios_csb.csv';a.click();
+}
+
+function adminTab(tab){
+  ['resumen','envios','organismos','parametros'].forEach((t,i)=>{
+    document.getElementById('at-'+t).classList.toggle('hidden',t!==tab);
+    document.querySelectorAll('.tab')[i].classList.toggle('active',t===tab);
+  });
+  if(tab==='envios')renderAdminAll();
+  if(tab==='organismos')renderAdminOrgs();
+  if(tab==='resumen')refreshAdmin();
+  if(tab==='parametros')cargarCamposParametros();
+}
+
+function cargarCamposParametros(){
+  document.getElementById('pm-anses-base-max').value    = TOPES.ANSES_BASE_MAX;
+  document.getElementById('pm-anses-aporte-min').value  = TOPES.ANSES_APORTE_MIN;
+  document.getElementById('pm-anses-aporte-max').value  = TOPES.ANSES_APORTE_MAX;
+  document.getElementById('pm-anses-contrib-min').value = TOPES.ANSES_CONTRIB_MIN;
+  document.getElementById('pm-pct-contrib').value       = +(TOPES.PCT_CONTRIB_PATRONAL*100).toFixed(4);
+  document.getElementById('pm-pct-aporte').value        = +(TOPES.PCT_APORTE_TRAB*100).toFixed(4);
+  document.getElementById('pm-osep-aporte-min').value   = TOPES.OSEP_APORTE_MIN;
+  document.getElementById('pm-osep-contrib-min').value  = TOPES.OSEP_CONTRIB_MIN;
+  document.getElementById('pm-osep-trasp-min').value    = TOPES.OSEP_TRASP_MIN;
+  document.getElementById('pm-osep-base-min').value     = TOPES.OSEP_BASE_MIN;
+  document.getElementById('pm-caja-min').value          = TOPES.CAJA_APORTE_MIN;
+  document.getElementById('pm-caja-gob').value          = TOPES.CAJA_SUELDO_GOB;
+  const cajaTope = TOPES.CAJA_SUELDO_GOB > 0 ? fmt(TOPES.CAJA_SUELDO_GOB * 0.03) : '—';
+  const lblCaja = document.getElementById('pm-caja-max-lbl');
+  if(lblCaja) lblCaja.textContent = 'Tope máx: $' + cajaTope;
+  document.getElementById('pm-svco').value              = TOPES.D_SVCO_VAL;
+  document.getElementById('pm-ss').value                = TOPES.D_SS_VAL;
+}
+
+function guardarParametros(){
+  const gn = id => parseFloat(document.getElementById(id).value)||0;
+  TOPES.ANSES_APORTE_MIN      = gn('pm-anses-aporte-min');
+  TOPES.ANSES_BASE_MAX        = gn('pm-anses-base-max');
+  TOPES.ANSES_APORTE_MAX      = gn('pm-anses-aporte-max');
+  TOPES.ANSES_CONTRIB_MIN     = gn('pm-anses-contrib-min');
+  TOPES.PCT_CONTRIB_PATRONAL  = gn('pm-pct-contrib')/100;
+  TOPES.PCT_APORTE_TRAB       = gn('pm-pct-aporte')/100;
+  TOPES.OSEP_APORTE_MIN       = gn('pm-osep-aporte-min');
+  TOPES.OSEP_CONTRIB_MIN      = gn('pm-osep-contrib-min');
+  TOPES.OSEP_TRASP_MIN        = gn('pm-osep-trasp-min');
+  TOPES.OSEP_BASE_MIN         = gn('pm-osep-base-min');
+  TOPES.CAJA_APORTE_MIN       = gn('pm-caja-min');
+  TOPES.CAJA_SUELDO_GOB       = gn('pm-caja-gob');
+  TOPES.D_SVCO_VAL            = gn('pm-svco');
+  TOPES.D_SS_VAL              = gn('pm-ss');
+  sincronizarTopes(); // actualizar alias globales
+  const ok = document.getElementById('param-ok');
+  ok.classList.remove('hidden');
+  setTimeout(()=>ok.classList.add('hidden'), 3000);
+  mostrarToast('✓ Parámetros actualizados');
+}
+
+init();
+</script>
+</body>
+</html>
