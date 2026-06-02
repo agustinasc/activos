@@ -39,7 +39,8 @@ ANCHO_LINEA = 222
 # [185:194] aporte_caj_cents     — round(aporte_caj*100), 9 chars, zero-padded
 # [194:196] separador            — '00'
 # [196:205] contrib_ca_cents     — round(contrib_ca*100), 9 chars, zero-padded
-# [205:216] total_cents          — round((aporte_caj+contrib_ca)*100), 11 chars, zero-padded
+# [205:216] deuda_cents          — deuda_caja*100 si tiene_deud es verdadero,
+#                                  caso contrario 11 ceros (sin deuda)
 # [216:222] periodo              — AAAAMM (6 chars)
 # ─────────────────────────────────────────────────────────────────────────────
 
@@ -57,6 +58,12 @@ def fv(fila, campo):
         return float(str(v).strip()) if pd.notna(v) and str(v).strip() not in ('', 'nan') else 0.0
     except ValueError:
         return 0.0
+
+
+def es_verdadero(valor):
+    """Interpreta el campo tiene_deud como booleano."""
+    s = str(valor).strip().lower()
+    return s in ('t', 'true', 'verdadero', 'si', 'sí', 's', '1', '1.0', 'x')
 
 
 def validar_cuil(cuil_str):
@@ -158,8 +165,13 @@ def fila_a_linea(fila):
     # ── [196:205] contrib_ca centavos (9 chars) ──────────────────────────────
     cc_cents = fmt_r(round(contrib_ca * 100), 9)
 
-    # ── [205:216] total centavos (11 chars) ──────────────────────────────────
-    total_cents = fmt_r(round((aporte_caj + contrib_ca) * 100), 11)
+    # ── [205:216] deuda centavos (11 chars) ──────────────────────────────────
+    # Solo se carga si tiene_deud es verdadero; en ese caso va deuda_caja.
+    if es_verdadero(fila.get('tiene_deud', '')):
+        deuda_caja  = fv(fila, 'deuda_caja')
+        total_cents = fmt_r(round(deuda_caja * 100), 11)
+    else:
+        total_cents = '0' * 11
 
     # ── armar línea ──────────────────────────────────────────────────────────
     linea = (
